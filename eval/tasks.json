@@ -1,0 +1,25 @@
+{
+  "note": "Dev tasks may be used to build the library and tune prompts. Held-out tasks must never be used for either.",
+  "dev": [
+    {"id": "d1", "template": "reach", "task": "Move the Franka arm's gripper to the point 0.4 m in front of the base, 0.3 m up."},
+    {"id": "d2", "template": "reach", "task": "Reach a randomly placed target sphere on the table with the robot arm end effector."},
+    {"id": "d3", "template": "reach", "task": "Make the arm touch a marker floating above the table, marker position changes every run."},
+    {"id": "d4", "template": "pick_place", "task": "Pick up the cube and put it in the bin."},
+    {"id": "d5", "template": "pick_place", "task": "Grab the red block from the table and drop it into the box."},
+    {"id": "d6", "template": "pick_place", "task": "Use the arm to move the cube from its random start position into the bin."}
+  ],
+  "heldout": [
+    {"id": "h1", "template": "reach", "task": "Bring the arm tip to the coordinates shown by the target marker."},
+    {"id": "h2", "template": "reach", "task": "Position the end effector exactly at the target point, which is randomised each run."},
+    {"id": "h3", "template": "reach", "task": "Extend the robot arm so its hand reaches the highlighted point above the table."},
+    {"id": "h4", "template": "pick_place", "task": "Lift the cube and set it down inside the bin."},
+    {"id": "h5", "template": "pick_place", "task": "Pick the small block up off the table and place it in the container."},
+    {"id": "h6", "template": "pick_place", "task": "Transfer the cube from where it spawns into the bin using the gripper."}
+  ],
+  "out_of_scope": [
+    {"id": "o1", "closest": "pick_place", "task": "Pick up a mug by its handle and pour it into a sink."},
+    {"id": "o2", "closest": "reach", "task": "Make a quadruped robot walk across rough terrain to a goal."},
+    {"id": "o3", "closest": "pick_place", "task": "Stack three cubes into a tower with the arm."},
+    {"id": "o4", "closest": "reach", "task": "Design a new 7-DoF welding robot and have it trace a seam."}
+  ]
+}
