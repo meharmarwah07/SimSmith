@@ -80,6 +80,29 @@ a script claiming e.g. `target_pos = ee_pos` is caught, not trusted. Scripts
 randomise anything else with `get_rng()`, honour `get_perturb()`, and end with
 `write_result(final_state)` containing raw positions only.
 
+## Security
+
+**Threat model: accidental gaming, not adversarial code.** The verifier's design (fixed
+success checks, independent re-measurement from MuJoCo state, a never-trusted
+self-report) and the pre-flight checks (`simsmith/preflight.py`) exist to catch an LLM
+*accidentally or lazily* gaming its own grade — echoing a target back as the answer,
+self-reporting success, drifting into an API it doesn't actually have, etc. They are
+**not** a security boundary against a script an attacker deliberately crafted to
+defeat the harness. `preflight.py`'s checks are AST-literal pattern matches: they close
+every bypass found during a specific audit (`docs/diagnosis_2026-10-24.md`) --
+`importlib`-based reflection, `getattr`/`setattr` indirection, dunder-attribute escapes,
+reaching into `simsmith_contract`'s private hooking state, shadowing `write_result` --
+but a sufficiently motivated attacker can always find one more level of indirection an
+AST pattern doesn't cover. `simsmith/runner.py` strips the child process's environment
+to a small allow-list (no API keys reach the script) and best-effort isolates its
+network namespace (`unshare --net --map-root-user`, confirmed working in this
+environment; plain `unshare --net` is not permitted here) as real, if partial,
+mitigations — but the script still runs as a plain subprocess of the harness, with
+full filesystem read access and no CPU/memory limits. If this project is ever used
+against untrusted or adversarial model output (not just "an LLM trying its honest
+best"), running candidate scripts in a real sandbox (container/VM, unprivileged user,
+read-only filesystem) is a prerequisite, not an enhancement.
+
 ## Known limitations
 
 - Two task templates, one robot; one pinned Isaac version.

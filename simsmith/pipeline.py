@@ -30,6 +30,28 @@ def extract_code(text: str) -> str:
     return (m.group(1) if m else text).strip() + "\n"
 
 
+_LOG_TEXT_CAP = 20000  # per stdout/stderr field, in a persisted candidate_log() record
+
+
+def candidate_log(c: "Candidate") -> dict:
+    """Full diagnostic record for one candidate: its code, preflight result, and
+    every per-seed run's exit code + stdout/stderr -- not just the pass/fail summary
+    a Score reduces it to. Callers that write candidates to a results JSON should
+    include this (see scripts/baseline_dev.py, scripts/baseline_best_of_5.py) so a
+    crash/failure can be diagnosed after the fact without rerunning anything."""
+    return {
+        "script": c.script,
+        "stage": c.stage,
+        "preflight_ok": c.preflight_ok,
+        "preflight_problems": c.preflight_problems,
+        "runs": [
+            {"seed": r.seed, "ok": r.ok, "exit_code": r.exit_code, "seconds": r.seconds,
+             "error": r.error, "stdout": r.stdout[-_LOG_TEXT_CAP:], "stderr": r.stderr[-_LOG_TEXT_CAP:]}
+            for r in c.runs
+        ],
+    }
+
+
 @dataclass
 class Candidate:
     idx: int
@@ -40,6 +62,7 @@ class Candidate:
     preflight_ok: bool = True
     preflight_problems: list = field(default_factory=list)
     score: Score | None = None
+    runs: list = field(default_factory=list)  # raw per-seed RunResult, for post-hoc diagnosis/logging
 
 
 @dataclass
@@ -89,16 +112,28 @@ class Pipeline:
     # 2-3. retrieve + generate
     def generate(self, goal: str, template: str, plan: str, n: int, use_library: bool) -> list:
         t = TEMPLATES[template]
+        scene_card = self.docs.scene_card(template)
         docs = self.docs.retrieve(f"{goal} {template}", k=max(n + 2, 6))
         examples = self.library.retrieve(goal, template, k=2) if use_library else []
+        # A caller's usage-tracking tag (see TokenFactoryLLM.set_tag) lives in its own
+        # thread-local and does not propagate to the worker threads below; carry it over
+        # explicitly so a caller tagging a whole solve() call still gets all N candidates'
+        # usage attributed to it, not silently dropped.
+        parent_tag = getattr(self.llm, "get_tag", lambda: None)()
 
         def build(i: int) -> Candidate:
+            if parent_tag is not None:
+                self.llm.set_tag(parent_tag)
             framing = prompts.FRAMINGS[i % len(prompts.FRAMINGS)]
             temp = prompts.TEMPERATURES[i % len(prompts.TEMPERATURES)] if n > 1 else 0.3
-            # each candidate sees a different slice of the retrieved docs
+            # each candidate sees a different slice of the retrieved docs, but the scene
+            # card for the active template is never subject to that windowing -- every
+            # candidate gets it regardless of what the keyword ranker picked.
             slice_ = docs[i:i + 3] if docs else []
             user = [f"Task: {goal}", f"Robot/template: {t.robot} / {t.name}",
                     f"Report at the end: {t.state_help}", f"Plan:\n{plan}", f"Style: {framing}"]
+            if scene_card:
+                user.append(f"Scene reference (ground truth, from the real XML):\n{scene_card}")
             if slice_:
                 user.append("Reference material (MuJoCo API notes/gotchas):\n" + "\n---\n".join(slice_))
             for ex in examples:
@@ -127,7 +162,8 @@ class Pipeline:
             c.preflight_problems = pf.problems if pf else (c.preflight_problems or ["empty script"])
             c.score = None
             return
-        results = [self.runner.run(c.script, seed) for seed in self.cfg.seeds]
+        results = [self.runner.run(c.script, seed, template=template) for seed in self.cfg.seeds]
+        c.runs = results
         c.score = verify(template, results)
 
     # 7. repair
@@ -136,7 +172,14 @@ class Pipeline:
             failure = c.score.failure_text or "unknown failure"
         else:
             failure = "pre-flight problems:\n" + "\n".join(c.preflight_problems)
-        user = f"Task: {goal}\n\nScript:\n```python\n{c.script}```\n\nFailure output:\n{failure}"
+        scene_card = self.docs.scene_card(template)
+        docs = self.docs.retrieve(f"{goal} {template} {failure}", k=6)
+        user = [f"Task: {goal}", f"Script:\n```python\n{c.script}```", f"Failure output:\n{failure}"]
+        if scene_card:
+            user.append(f"Scene reference (ground truth, from the real XML):\n{scene_card}")
+        if docs:
+            user.append("Reference material (MuJoCo API notes/gotchas):\n" + "\n---\n".join(docs[:3]))
+        user = "\n\n".join(user)
         try:
             out = self.llm.complete(prompts.REPAIR_SYSTEM, user, self.cfg.model_generate, 0.3, kind="repair")
         except LLMError:

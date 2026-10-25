@@ -177,6 +177,32 @@ def test_budget_from_env_var(tmp_path, monkeypatch):
         client.complete("sys", "user", "m")
 
 
+def test_budget_fails_closed_when_model_has_no_price_configured(tmp_path, monkeypatch):
+    # A budget cap with plenty of headroom (not "already exhausted") but NO price at
+    # all for this model id must still block the call -- an unpriced call must never
+    # be allowed to spend real money "for free" just because nothing is tracking it.
+    for var in ("SIMSMITH_PRICE_IN", "SIMSMITH_PRICE_OUT", "SIMSMITH_PRICE_NANO_IN",
+               "SIMSMITH_PRICE_NANO_OUT", "SIMSMITH_PRICE_SUPER_IN", "SIMSMITH_PRICE_SUPER_OUT",
+               "SIMSMITH_PRICE_ULTRA_IN", "SIMSMITH_PRICE_ULTRA_OUT"):
+        monkeypatch.delenv(var, raising=False)
+    calls = {"n": 0}
+
+    def fake_urlopen(req, timeout):
+        calls["n"] += 1
+        return FakeResponse(_ok_body())
+
+    monkeypatch.setattr(llm_mod.urllib.request, "urlopen", fake_urlopen)
+    client = _llm(tmp_path, budget_usd=1000.0)  # not exhausted -- the missing price must still block
+    with pytest.raises(BudgetExceeded, match="no SIMSMITH_PRICE_"):
+        client.complete("sys", "user", "some-totally-unpriced-model")
+    assert calls["n"] == 0  # never even made the HTTP request
+    # a priced model, same budget, same client: must succeed normally
+    monkeypatch.setenv("SIMSMITH_PRICE_IN", "0.06")
+    monkeypatch.setenv("SIMSMITH_PRICE_OUT", "0.24")
+    assert client.complete("sys", "user", "m") == "print(1)"
+    assert calls["n"] == 1
+
+
 # ---- usage logging + max_tokens defaults ----------------------------------
 def test_usage_logged_with_prompt_and_completion_tokens(tmp_path, monkeypatch):
     monkeypatch.setattr(llm_mod.urllib.request, "urlopen",
@@ -217,7 +243,7 @@ def test_default_max_tokens_by_kind(tmp_path, monkeypatch):
     client.complete("sys", "user", "m", kind="intake")
     assert seen["payload"]["max_tokens"] == 3000
     client.complete("sys", "user", "m", kind="generate")
-    assert seen["payload"]["max_tokens"] == 8000
+    assert seen["payload"]["max_tokens"] == 24000
     client.complete("sys", "user", "m", kind="repair")
     assert seen["payload"]["max_tokens"] == 8000
 

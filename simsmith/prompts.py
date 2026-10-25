@@ -1,9 +1,41 @@
 """Prompt text. Keep simulator-version-specific guidance in docs_index/, not here."""
 
-# Bump this whenever INTAKE/PLAN/GENERATE/REPAIR text changes, and record it alongside
-# any eval/baseline results -- without it a pass-rate number can't be tied to the
-# prompt that produced it.
-PROMPT_VERSION = "mujoco-v1"
+# Bump this whenever INTAKE/PLAN/GENERATE/REPAIR text OR the generation config
+# (max_tokens, extra_payload) changes, and record it alongside any eval/baseline
+# results -- without it a pass-rate number can't be tied to what produced it.
+# v2 vs v1: GENERATE max_tokens 8000 -> 24000 (v1 measured pick_place truncating
+# 100% of the time at 8000), and callers may pass extra_payload=
+# {"chat_template_kwargs": {"enable_thinking": False}} to suppress Nemotron's
+# "reasoning" field -- probed to cut completion tokens/cost/latency roughly 3-6x
+# and eliminate truncation entirely, at the cost of a higher hallucinated-API rate
+# on pick_place specifically in a small (n=5) probe. Prompt text itself is unchanged.
+PROMPT_VERSION = "mujoco-v5"
+# v3 vs v2: generate()/repair() now always append the introspected scene card
+# (docs_index/scene_<template>.md, see scripts/gen_scene_cards.py and
+# DocIndex.scene_card()) for the active template, independent of the keyword
+# ranker's output -- so every candidate/repair sees ground-truth body/joint/
+# actuator/keyframe facts for the scene it must load, not just whatever the
+# ranker happened to retrieve. Prompt text itself is otherwise unchanged.
+# v4 vs v3: GENERATE_SYSTEM's SIMSMITH_ROOT/scene-loading step used to describe the
+# fallback in prose ("read it with os.environ, with os.path.dirname(...) as a local
+# fallback"), which measurably caused the model to invent-then-misrecall a garbled
+# variable name a line or two later (e.g. defines simsmith_root, references
+# smithsonian_root) -- docs/diagnosis_2026-10-24.md Part 1 found this was 50% of all
+# pick_place crashes in one run. Replaced with a literal, exact snippet the model is
+# told to copy verbatim, removing the need to invent-and-recall a name at all. Also
+# lists the newly-banned preflight patterns (getattr/setattr/importlib/builtins/
+# sys.modules/dunder attrs/non-public simsmith_contract attrs) so a candidate doesn't
+# waste a generation on something that will be statically rejected anyway.
+# v5 vs v4: the v4 "copy this preamble verbatim" fix removed the SIMSMITH_ROOT-name-
+# corruption crashes entirely (docs/diagnosis_2026-10-25.md) but introduced a new one --
+# models treated the preamble as closed and ~31-55% of reach candidates then never
+# `import numpy` despite needing `np.` throughout, a NameError (the single largest
+# crash cause in a v4 regression run). Fixed at the source: numpy is now part of the
+# literal preamble. Also made explicit (previously only enforced by preflight, not
+# stated): load the scene ONLY via mujoco.MjModel.from_xml_path, never open()/vars(),
+# and list every import at the top -- the last of these is also now a precondition for
+# preflight's new undefined-name check (see simsmith/preflight.py), which rejects a
+# script using a name no import/assignment/builtin accounts for, before any sim time.
 
 INTAKE_SYSTEM = """You map a user's robot request onto ONE supported task template.
 Supported templates:
@@ -26,12 +58,27 @@ GENERATE_SYSTEM = """You write complete, runnable MuJoCo Python scripts (headles
 for a Franka Panda arm.
 Hard requirements:
 1. Single file. Return ONLY one ```python code block.
-2. Start with: `import mujoco` then
-   `from simsmith_contract import get_task, get_rng, get_perturb, write_result`
-3. Load the scene from $SIMSMITH_ROOT/assets/franka_emika_panda/: `scene.xml` for a
-   reach task, `scene_pick_place.xml` for a pick_place task (it adds a free body named
-   "cube"). SIMSMITH_ROOT is in the environment; read it with os.environ, with
-   os.path.dirname(os.path.dirname(os.path.abspath(__file__))) as a local fallback.
+2. Start with EXACTLY this preamble, copied verbatim (same variable names throughout --
+   do not rename them or re-derive them differently later in the script), then list
+   every other import you need, also at the top, before any other code:
+   ```python
+   import os
+   import mujoco
+   import numpy as np
+   from simsmith_contract import get_task, get_rng, get_perturb, write_result
+   SIMSMITH_ROOT = os.environ.get("SIMSMITH_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+   ```
+   Every name you use later must come from an import at the top, a builtin, or something
+   you assign/define yourself -- a name you never imported (e.g. using `np.` without
+   this import) is rejected before any sim time is spent.
+3. Load the scene using that exact `SIMSMITH_ROOT` variable, nothing else, and ONLY via
+   `mujoco.MjModel.from_xml_path` (never `from_xml_string`, never read/parse the XML
+   file yourself):
+   ```python
+   model = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, "assets", "franka_emika_panda", "scene.xml"))
+   ```
+   Use `scene.xml` for a reach task, `scene_pick_place.xml` for a pick_place task (it
+   adds a free body named "cube"). `model`/`data` variable names otherwise your choice.
 4. You MUST actually simulate: create mujoco.MjData, then call mujoco.mj_step(model, data)
    enough times to let the arm/gripper actually get where it's going (hundreds of steps
    at the model's own timestep, not one or two). A script that never steps physics
@@ -61,7 +108,14 @@ Hard requirements:
    pick_place). Never a success flag.
 9. Use only APIs from the reference material (MuJoCo API notes and gotchas are
    retrieved for you below) or ones you are certain exist. Do not invent function names.
-10. No subprocess, sockets, network access, eval/exec."""
+10. No subprocess, sockets, network access, eval/exec/compile/open/input/getattr/
+    setattr/globals/vars/importlib/builtins/sys.modules, and no attribute access of any
+    kind on `simsmith_contract` other than calling get_task/get_rng/get_perturb/
+    write_result (the normal `from simsmith_contract import ...` form is fine and
+    expected; `import simsmith_contract` to poke at anything else on it is not). In
+    particular: never call `open()` (not even to read the scene XML or write a debug
+    log -- print() instead) and never call `vars()` (print the specific values you
+    want instead). These are all statically rejected before any sim time is spent."""
 
 REPAIR_SYSTEM = GENERATE_SYSTEM + """
 You are repairing a script that failed. You are given the script and exact failure output.

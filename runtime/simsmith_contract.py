@@ -21,11 +21,17 @@ Rules for generated scripts:
     not task parameters -- get_task() doesn't cover them because they depend
     on what your script's simulation actually did. Importing this module
     hooks mujoco.MjData/mj_step so write_result() can independently
-    re-measure these four fields itself, by body/joint name, from whichever
-    MjData instance actually got stepped the most. Whatever you pass for
-    them is informational only; the measured value always wins, and it is
-    the measured value that fails the preflight simulation check if you
-    never really call mj_step.
+    re-measure these four fields itself, by body/joint name, from a snapshot
+    taken at the LAST mj_step call of whichever MjData instance actually got
+    stepped the most -- not from live MjData when write_result() runs, so
+    nothing you do after your last real step (direct qpos writes, an extra
+    mj_forward, ...) can change what gets reported. Whatever you pass for
+    them is informational only; the measured value always wins.
+  * The model you load MUST be the official scene for this task (same body
+    names/nq/nu/ngeom as assets/franka_emika_panda/scene.xml for reach or
+    scene_pick_place.xml for pick_place) -- mujoco.MjModel.from_xml_path/
+    from_xml_string raise immediately if it isn't. Build your own toy world
+    instead and the script fails outright, before it can simulate anything.
 """
 import json
 import os
@@ -44,6 +50,14 @@ TASK_KEYS = {
 
 def get_seed() -> int:
     return int(os.environ.get("SIMSMITH_SEED", "0"))
+
+
+def get_template() -> str:
+    return os.environ.get("SIMSMITH_TEMPLATE", "")
+
+
+def get_sim_root() -> str:
+    return os.environ.get("SIMSMITH_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def get_rng() -> random.Random:
@@ -90,15 +104,71 @@ def get_task(template: str) -> dict:
 
 # --- MuJoCo outcome measurement -------------------------------------------------
 # A script cannot be trusted to report where its own simulation ended up (it could
-# just echo the target back). So we hook mujoco.MjData/mj_step at import time -- before
-# the script creates anything -- track how many times each MjData instance actually got
-# stepped, and at write_result() time measure ee_pos/cube_pos/cube_velocity/
-# gripper_opening ourselves, by name, from whichever instance was stepped the most
-# (a script's throwaway MjData copies used for IK sub-solves never call mj_step, so
-# they're never "the busiest" and are naturally ignored).
+# just echo the target back, build its own toy model, or poke qpos after the last real
+# step). So we hook mujoco.MjModel.from_xml_path/from_xml_string, MjData and mj_step at
+# import time -- before the script creates anything -- to:
+#   1. Reject a model that doesn't structurally match the official scene for this
+#      template (body names, nq, nu, ngeom): a script that builds its own toy world
+#      instead of the real one fails immediately, with a clear message.
+#   2. Track how many times each MjData instance actually got mj_step'ed, and snapshot
+#      its state AT THE MOMENT of each mj_step call -- not whatever state exists later
+#      when write_result() happens to run. A script that pokes qpos (then maybe calls
+#      mj_forward, which we do NOT hook) after its last real step cannot move the
+#      reported pose, because the measurement comes from the frozen snapshot, not from
+#      live MjData.
+# write_result() then measures ee_pos/cube_pos/cube_velocity/gripper_opening itself,
+# by name, from the snapshot of whichever instance was stepped the most (a script's
+# throwaway MjData copies used for IK sub-solves never call mj_step, so they're never
+# "the busiest" and are naturally ignored).
 
-_MJ_TRACKED: dict = {}   # id(MjData instance) -> {"data": data, "model": model, "steps": int}
+_OFFICIAL_SCENES = {"reach": "scene.xml", "pick_place": "scene_pick_place.xml"}
+
+_MJ_TRACKED: dict = {}   # id(MjData instance) -> {"data","model","steps","snap_xpos","snap_qvel","snap_qpos"}
 _MJ_HOOKED = False
+_MJ_EXPECTED_FINGERPRINT: dict = {}  # template -> (frozenset(body_names), nq, nu, ngeom), cached
+
+
+def _model_fingerprint(model, mujoco) -> tuple:
+    names = frozenset(
+        mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, i) for i in range(model.nbody)
+    )
+    return (names, model.nq, model.nu, model.ngeom)
+
+
+def _expected_fingerprint(template: str, mujoco, orig_from_xml_path):
+    if template not in _OFFICIAL_SCENES:
+        return None
+    if template in _MJ_EXPECTED_FINGERPRINT:
+        return _MJ_EXPECTED_FINGERPRINT[template]
+    path = os.path.join(get_sim_root(), "assets", "franka_emika_panda", _OFFICIAL_SCENES[template])
+    ref_model = orig_from_xml_path(path)
+    fp = _model_fingerprint(ref_model, mujoco)
+    _MJ_EXPECTED_FINGERPRINT[template] = fp
+    return fp
+
+
+def _check_model_identity(model, mujoco, orig_from_xml_path) -> None:
+    template = get_template()
+    expected = _expected_fingerprint(template, mujoco, orig_from_xml_path)
+    if expected is None:
+        return  # unknown template (e.g. a direct test/script run outside the pipeline): can't check
+    got = _model_fingerprint(model, mujoco)
+    if got != expected:
+        exp_names, exp_nq, exp_nu, exp_ngeom = expected
+        got_names, got_nq, got_nu, got_ngeom = got
+        diffs = []
+        if got_names != exp_names:
+            diffs.append(f"body names differ (missing: {sorted(exp_names - got_names)}, "
+                        f"extra: {sorted(got_names - exp_names)})")
+        if got_nq != exp_nq:
+            diffs.append(f"nq={got_nq} (expected {exp_nq})")
+        if got_nu != exp_nu:
+            diffs.append(f"nu={got_nu} (expected {exp_nu})")
+        if got_ngeom != exp_ngeom:
+            diffs.append(f"ngeom={got_ngeom} (expected {exp_ngeom})")
+        raise RuntimeError(
+            f"model does not match the official '{template}' scene "
+            f"({_OFFICIAL_SCENES[template]}): " + "; ".join(diffs))
 
 
 def _hook_mujoco() -> None:
@@ -113,19 +183,43 @@ def _hook_mujoco() -> None:
 
     _orig_mjdata = mujoco.MjData
     _orig_mj_step = mujoco.mj_step
+    _orig_from_xml_path = mujoco.MjModel.from_xml_path
+    _orig_from_xml_string = mujoco.MjModel.from_xml_string
+
+    def _tracked_from_xml_path(*args, **kwargs):
+        model = _orig_from_xml_path(*args, **kwargs)
+        _check_model_identity(model, mujoco, _orig_from_xml_path)
+        return model
+
+    def _tracked_from_xml_string(*args, **kwargs):
+        model = _orig_from_xml_string(*args, **kwargs)
+        _check_model_identity(model, mujoco, _orig_from_xml_path)
+        return model
 
     def _tracked_mjdata(model, *args, **kwargs):
         data = _orig_mjdata(model, *args, **kwargs)
-        _MJ_TRACKED[id(data)] = {"data": data, "model": model, "steps": 0}
+        _MJ_TRACKED[id(data)] = {"data": data, "model": model, "steps": 0,
+                                 "snap_xpos": None, "snap_qvel": None, "snap_qpos": None}
         return data
 
     def _tracked_mj_step(model, data, nstep: int = 1):
+        result = _orig_mj_step(model, data, nstep)
         entry = _MJ_TRACKED.get(id(data))
         if entry is None:
-            entry = _MJ_TRACKED[id(data)] = {"data": data, "model": model, "steps": 0}
+            entry = _MJ_TRACKED[id(data)] = {"data": data, "model": model, "steps": 0,
+                                             "snap_xpos": None, "snap_qvel": None, "snap_qpos": None}
         entry["steps"] += nstep
-        return _orig_mj_step(model, data, nstep)
+        # Snapshot AT this step, overwriting any earlier one: write_result() measures
+        # from this, never from live MjData, so nothing after the last mj_step call
+        # (direct qpos writes, mj_forward/mj_kinematics recomputes, ...) can change
+        # what gets reported.
+        entry["snap_xpos"] = data.xpos.copy()
+        entry["snap_qvel"] = data.qvel.copy()
+        entry["snap_qpos"] = data.qpos.copy()
+        return result
 
+    mujoco.MjModel.from_xml_path = staticmethod(_tracked_from_xml_path)
+    mujoco.MjModel.from_xml_string = staticmethod(_tracked_from_xml_string)
     mujoco.MjData = _tracked_mjdata
     mujoco.mj_step = _tracked_mj_step
 
@@ -140,30 +234,32 @@ def _busiest_mj_instance() -> dict | None:
 
 
 def _measure_from_mujoco(final_state: dict) -> None:
-    """Overwrite ee_pos/cube_pos/cube_velocity/gripper_opening in place, from
-    the busiest tracked MjData instance -- never from what the script reported. No-ops
-    (and adds no "_sim_steps" key) if the script never actually touched mujoco, which
-    is fine: that case is caught separately, statically, by the pre-flight check."""
+    """Overwrite ee_pos/cube_pos/cube_velocity/gripper_opening in place, from the LAST
+    mj_step SNAPSHOT of the busiest tracked MjData instance -- never from live MjData,
+    and never from what the script reported. No-ops (and adds no "_sim_steps" key) if
+    the script never actually touched mujoco, which is fine: that case is caught
+    separately, statically, by the pre-flight check."""
     busiest = _busiest_mj_instance()
-    if busiest is None:
+    if busiest is None or busiest["snap_xpos"] is None:
         return
     import mujoco  # already imported if we have a tracked instance; safe to re-import
 
     final_state["_sim_steps"] = busiest["steps"]
-    data, model = busiest["data"], busiest["model"]
+    model = busiest["model"]
+    snap_xpos, snap_qvel, snap_qpos = busiest["snap_xpos"], busiest["snap_qvel"], busiest["snap_qpos"]
 
     def body_pos(name: str):
         bid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, name)
         if bid < 0:
             return [float("nan")] * 3
-        return [float(x) for x in data.xpos[bid]]
+        return [float(x) for x in snap_xpos[bid]]
 
     def joint_qvel3(name: str):
         jid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, name)
         if jid < 0:
             return [float("nan")] * 3
         adr = model.jnt_dofadr[jid]
-        return [float(x) for x in data.qvel[adr:adr + 3]]
+        return [float(x) for x in snap_qvel[adr:adr + 3]]
 
     def finger_opening_sum(names) -> float:
         total = 0.0
@@ -171,7 +267,7 @@ def _measure_from_mujoco(final_state: dict) -> None:
             jid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, name)
             if jid < 0:
                 return float("nan")
-            total += float(data.qpos[model.jnt_qposadr[jid]])
+            total += float(snap_qpos[model.jnt_qposadr[jid]])
         return total
 
     if "ee_pos" in final_state:

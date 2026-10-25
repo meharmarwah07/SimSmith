@@ -18,8 +18,11 @@ _TASK_KEY_LABEL = {"target_pos": "target", "cube_initial_pos": "cube_initial", "
 # simulated -- it ticked the pre-flight "calls mj_step" box without doing anything with
 # it. "_sim_steps" is written by the contract's own measurement (runtime/
 # simsmith_contract.py), never by the script, so this can't be gamed by reporting a
-# bigger number.
-MIN_MJ_STEPS = 10
+# bigger number. 100 is chosen with margin below the smallest honest count measured
+# from the hand-written examples: reach_mujoco.py's fastest-converging seed still takes
+# 750 steps (one 1.5s re-aim at the model's 0.002s timestep), pick_place_mujoco.py
+# always takes 5000.
+MIN_MJ_STEPS = 100
 
 
 def _simulation_too_short(result: RunResult) -> str:

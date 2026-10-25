@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import os
 import random
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -40,7 +41,9 @@ class BudgetExceeded(LLMError):
 # Default max_tokens per call "kind", overridable per-kind with
 # SIMSMITH_MAX_TOKENS_<KIND> (e.g. SIMSMITH_MAX_TOKENS_GENERATE=12000).
 DEFAULT_MAX_TOKENS = {
-    "generate": 8000,
+    "generate": 24000,  # Nemotron Nano spends a large, variable chunk of this on its
+                        # own "reasoning" field before any script content; 8000 was
+                        # measured truncating 100% of pick_place attempts (mujoco-v1 baseline).
     "repair": 8000,
     "plan": 3000,
     "intake": 3000,
@@ -64,11 +67,41 @@ def _budget_from_env() -> float | None:
     return float(raw) if raw else None
 
 
+# Per-model price keys, checked as a case-insensitive substring of the model id (e.g.
+# "nvidia/Nemotron-3-Ultra-550b-a55b" -> "ULTRA"), so SIMSMITH_PRICE_<KEY>_IN/_OUT can
+# give each model tier its own real rate instead of one flat price applied to whichever
+# model happens to be configured. Order matters only in that the first match wins; the
+# three tiers don't overlap in practice.
+_PRICE_KEY_PATTERNS = ("ultra", "super", "nano")
+
+
+def _price_for_model(model: str) -> tuple[float, float] | None:
+    """(price_in, price_out) per 1M tokens for `model`, or None if no price is
+    configured for it -- callers must treat None as "unknown," never as $0."""
+    low = model.lower()
+    for pat in _PRICE_KEY_PATTERNS:
+        if pat in low:
+            key = pat.upper()
+            in_raw = os.environ.get(f"SIMSMITH_PRICE_{key}_IN")
+            out_raw = os.environ.get(f"SIMSMITH_PRICE_{key}_OUT")
+            if in_raw is not None and out_raw is not None:
+                return float(in_raw), float(out_raw)
+            break
+    # Fall back to one flat rate for any model (kept for simple single-model setups,
+    # e.g. the test suite, and for a model id matching none of the tiers above).
+    in_raw = os.environ.get("SIMSMITH_PRICE_IN")
+    out_raw = os.environ.get("SIMSMITH_PRICE_OUT")
+    if in_raw is not None and out_raw is not None:
+        return float(in_raw), float(out_raw)
+    return None
+
+
 class TokenFactoryLLM:
     """Plain-HTTP client for an OpenAI-compatible /chat/completions endpoint."""
 
     def __init__(self, base_url: str, api_key: str, retries: int = 3, timeout: int = 120,
-                 usage_log_path: str | None = None, budget_usd: float | None = None):
+                 usage_log_path: str | None = None, budget_usd: float | None = None,
+                 extra_payload: dict | None = None):
         if not base_url or not api_key:
             raise LLMError("TOKEN_FACTORY_BASE_URL and TOKEN_FACTORY_API_KEY must be set")
         self.base_url = base_url.rstrip("/")
@@ -82,6 +115,30 @@ class TokenFactoryLLM:
         )
         self.budget_usd = budget_usd if budget_usd is not None else _budget_from_env()
         self.spent_usd = 0.0
+        self._lock = threading.Lock()  # guards spent_usd/calls/usage-log across concurrent complete()s
+        self._tls = threading.local()  # per-thread tag, so concurrent callers' usage rows can be told apart
+        # Extra top-level JSON fields merged into every request, e.g.
+        # {"chat_template_kwargs": {"enable_thinking": False}} to suppress a reasoning
+        # model's "reasoning" field (Token Factory / Nemotron Nano specific; see
+        # docs_index/mujoco_notes.md's notes on the "reasoning" field for why this
+        # exists at all -- it's never read as the answer either way).
+        self.extra_payload = extra_payload or {}
+
+    def set_tag(self, tag) -> None:
+        """Label every usage record this (calling) thread logs from here on with `tag`,
+        e.g. an opaque generation id. Needed because with concurrent complete() calls
+        (Pipeline.generate()'s ThreadPoolExecutor, or a caller parallelizing across
+        whole generations) usage rows interleave in the log and can't be attributed by
+        position; the tag is how a caller recovers "which generation cost what."
+
+        NOTE: a thread's tag does NOT propagate to a ThreadPoolExecutor worker thread it
+        spawns (thread-locals aren't inherited) -- a caller that wants per-generation
+        attribution across its own nested pool (as Pipeline.generate() does) must read
+        get_tag() in the parent and call set_tag() again inside each worker."""
+        self._tls.tag = tag
+
+    def get_tag(self):
+        return getattr(self._tls, "tag", None)
 
     def complete(self, system: str, user: str, model: str = "", temperature: float = 0.5,
                  max_tokens: int | None = None, *, kind: str = "generate") -> str:
@@ -89,9 +146,23 @@ class TokenFactoryLLM:
             raise LLMError("model id is empty; set SIMSMITH_MODEL_* in .env")
         if max_tokens is None:
             max_tokens = _max_tokens_for(kind)
-        if self.budget_usd is not None and self.spent_usd >= self.budget_usd:
-            raise BudgetExceeded(
-                f"budget ${self.budget_usd:.4f} reached (spent ${self.spent_usd:.4f}); call blocked before it ran")
+        with self._lock:
+            if self.budget_usd is not None:
+                # Fail CLOSED, not open: a budget cap is worthless if it silently stops
+                # counting the moment a model has no price configured (previously,
+                # _price_for_model() returning None just meant cost_usd=None and
+                # spent_usd never grew for that model's calls -- unpriced spend was
+                # invisible to the guard, not blocked by it). If you set a budget, every
+                # model it's meant to cover must have a real SIMSMITH_PRICE_* -- see
+                # docs/diagnosis_2026-10-24.md's "High" finding on this.
+                if _price_for_model(model) is None:
+                    raise BudgetExceeded(
+                        f"budget ${self.budget_usd:.4f} is set but no SIMSMITH_PRICE_* is "
+                        f"configured for model {model!r}; failing closed rather than letting "
+                        f"unpriced spend go uncounted against the cap (call blocked before it ran)")
+                if self.spent_usd >= self.budget_usd:
+                    raise BudgetExceeded(
+                        f"budget ${self.budget_usd:.4f} reached (spent ${self.spent_usd:.4f}); call blocked before it ran")
 
         payload = {
             "model": model,
@@ -100,10 +171,12 @@ class TokenFactoryLLM:
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
+        payload.update(self.extra_payload)
         t0 = time.time()
         body = self._post_with_retries(payload)
         seconds = time.time() - t0
-        self.calls += 1
+        with self._lock:
+            self.calls += 1
 
         choice = (body.get("choices") or [{}])[0]
         message = choice.get("message") or {}
@@ -152,21 +225,30 @@ class TokenFactoryLLM:
         return (2 ** attempt) + random.uniform(0, 0.5)
 
     def _log_usage(self, model: str, kind: str, prompt_tokens: int, completion_tokens: int,
-                    seconds: float, finish_reason) -> float:
-        price_in = float(os.environ.get("SIMSMITH_PRICE_IN", "0"))
-        price_out = float(os.environ.get("SIMSMITH_PRICE_OUT", "0"))
-        cost = prompt_tokens / 1_000_000 * price_in + completion_tokens / 1_000_000 * price_out
-        self.spent_usd += cost
-        if self.usage_log_path:
-            record = {
-                "ts": time.time(), "model": model, "kind": kind,
-                "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens,
-                "cost_usd": cost, "seconds": seconds, "finish_reason": finish_reason,
-                "cumulative_spent_usd": self.spent_usd,
-            }
-            dirname = os.path.dirname(self.usage_log_path)
-            if dirname:
-                os.makedirs(dirname, exist_ok=True)
-            with open(self.usage_log_path, "a", encoding="utf-8") as f:
-                f.write(json.dumps(record) + "\n")
+                    seconds: float, finish_reason) -> float | None:
+        price = _price_for_model(model)
+        cost = None
+        if price is not None:
+            price_in, price_out = price
+            cost = prompt_tokens / 1_000_000 * price_in + completion_tokens / 1_000_000 * price_out
+        tag = getattr(self._tls, "tag", None)
+        with self._lock:
+            if cost is not None:
+                self.spent_usd += cost
+            if self.usage_log_path:
+                record = {
+                    "ts": time.time(), "model": model, "kind": kind, "tag": tag,
+                    "prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens,
+                    # cost_usd is None (never a fake $0) when no SIMSMITH_PRICE_* is
+                    # configured for this model; price_known tells a reader which it is
+                    # without having to guess from cost_usd == 0 being a real zero cost.
+                    "cost_usd": cost, "price_known": cost is not None,
+                    "seconds": seconds, "finish_reason": finish_reason,
+                    "cumulative_spent_usd": self.spent_usd,
+                }
+                dirname = os.path.dirname(self.usage_log_path)
+                if dirname:
+                    os.makedirs(dirname, exist_ok=True)
+                with open(self.usage_log_path, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(record) + "\n")
         return cost

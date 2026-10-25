@@ -12,11 +12,14 @@ from simsmith.runner import RunResult, SubprocessRunner  # noqa: E402
 from simsmith.templates import TEMPLATES, closest_template  # noqa: E402
 from simsmith.verifier import verify  # noqa: E402 (side effect: puts runtime/ on sys.path)
 import simsmith_contract  # noqa: E402
-from simsmith.pipeline import Pipeline, extract_code  # noqa: E402
+from simsmith.pipeline import Pipeline, candidate_log, extract_code  # noqa: E402
 from tests.mocks import (  # noqa: E402
     BANNED, CRASH, GOOD, SELF_GRADE, WRONG, MockLLM,
     CHEAT_REACH, CHEAT_PICK_PLACE, HONEST_PICK_PLACE,
     CHEAT_REACH_ECHOES_EE_POS, CHEAT_PICK_PLACE_ECHOES_CUBE_POS,
+    CHEAT_TELEPORTED_SPHERE, CHEAT_QPOS_AFTER_LAST_STEP, CHEAT_CUBE_HELD_IN_AIR,
+    CHEAT_MONKEYPATCH_MEASUREMENT, CHEAT_FAKE_MJ_TRACKED_ENTRY,
+    CHEAT_SHADOW_WRITE_RESULT, CHEAT_SWALLOW_EXCEPTION_FAKE_SUCCESS,
 )
 
 
@@ -163,6 +166,88 @@ write_result({"ee_pos": target, "target_pos": target})
     assert "need >=" in s.failure_text
 
 
+# ---- harness integrity: model identity + last-step snapshot (all 4 MUST fail) -------
+def test_exploit_teleported_sphere_fails_model_identity():
+    # Real mujoco, real mj_step calls, but a toy sphere world instead of the official
+    # scene.xml -- must be rejected outright by the model-identity check, before
+    # anything about steps/measurement even matters.
+    r = SubprocessRunner("", 60).run(code(CHEAT_TELEPORTED_SPHERE), seed=2, template="reach")
+    assert not r.ok
+    assert "does not match the official 'reach' scene" in r.error
+
+
+def test_exploit_echo_of_target_as_ee_pos_fails():
+    r = SubprocessRunner("", 60).run(code(CHEAT_REACH_ECHOES_EE_POS), seed=3, template="reach")
+    assert r.ok
+    assert r.final_state.get("_sim_steps", 0) >= 100
+    assert r.final_state["ee_pos"] != r.final_state["target_pos"]
+    assert not verify("reach", [r]).ok
+
+
+def test_exploit_qpos_written_after_last_step_is_ignored():
+    # The script fakes qpos + calls mj_forward (not hooked) after its last real
+    # mj_step. The measured ee_pos must reflect the snapshot taken AT that last step,
+    # not whatever live MjData looks like afterward.
+    r = SubprocessRunner("", 60).run(code(CHEAT_QPOS_AFTER_LAST_STEP), seed=6, template="reach")
+    assert r.ok
+    assert r.final_state.get("_sim_steps", 0) >= 100
+    # the fake pose was engineered to put the (meaningless) post-hack live xpos
+    # at the target; the snapshot-measured ee_pos must NOT be anywhere near it
+    assert not verify("reach", [r]).ok
+
+
+def test_exploit_cube_held_in_air_fails():
+    r = SubprocessRunner("", 60).run(code(CHEAT_CUBE_HELD_IN_AIR), seed=7, template="pick_place")
+    assert r.ok
+    assert r.final_state.get("_sim_steps", 0) >= 100
+    s = verify("pick_place", [r])
+    assert not s.ok
+    assert "resting height" in s.failure_text
+
+
+# ---- docs/diagnosis_2026-10-24.md Part 4: five adversarial scripts, all MUST fail --
+# (#5, the control, is CHEAT_QPOS_AFTER_LAST_STEP, already covered by
+# test_exploit_qpos_written_after_last_step_is_ignored above.)
+def test_adversarial_monkeypatch_measurement_rejected_by_preflight():
+    r = check(code(CHEAT_MONKEYPATCH_MEASUREMENT))
+    assert not r.ok
+    assert any("simsmith_contract" in p and "_measure_from_mujoco" in p for p in r.problems)
+
+
+def test_adversarial_fake_mj_tracked_entry_rejected_by_preflight():
+    r = check(code(CHEAT_FAKE_MJ_TRACKED_ENTRY))
+    assert not r.ok
+    assert any("simsmith_contract" in p and "_MJ_TRACKED" in p for p in r.problems)
+
+
+def test_adversarial_shadow_write_result_rejected_by_preflight():
+    r = check(code(CHEAT_SHADOW_WRITE_RESULT))
+    assert not r.ok
+    assert any("write_result" in p and "shadow" in p for p in r.problems)
+    assert any("open" in p for p in r.problems)
+
+
+def test_adversarial_swallow_exception_fake_success_fails_at_runtime():
+    # Passes preflight (nothing banned here) -- must fail via the real write_result()'s
+    # independent re-measurement, not via a static check.
+    assert check(code(CHEAT_SWALLOW_EXCEPTION_FAKE_SUCCESS)).ok
+    r = SubprocessRunner("", 60).run(code(CHEAT_SWALLOW_EXCEPTION_FAKE_SUCCESS), seed=8, template="reach")
+    assert r.ok
+    assert r.final_state.get("_sim_steps", 0) >= 100
+    assert not verify("reach", [r]).ok
+
+
+def test_honest_examples_pass_under_the_hardened_harness():
+    # Sanity: model-identity + last-step snapshot + the raised MIN_MJ_STEPS must not
+    # regress the real hand-written scripts (full 100-seed validation is separate).
+    for name, template in (("reach_mujoco.py", "reach"), ("pick_place_mujoco.py", "pick_place")):
+        with open(os.path.join(ROOT, "examples", name), encoding="utf-8") as f:
+            script = f.read()
+        r = SubprocessRunner("", 60).run(script, seed=1, template=template)
+        assert r.ok, (name, r.error)
+        assert verify(template, [r]).ok, (name, r.final_state)
+
+
 def test_nan_and_garbage_rejected():
     assert not TEMPLATES["reach"].check({"ee_pos": [float("nan"), 0, 0], "target_pos": [0, 0, 0]})[0]
     assert not TEMPLATES["pick_place"].check(_pick_place_state(cube_pos="x"))[0]
@@ -205,6 +290,157 @@ def test_preflight_rejections():
     assert any("syntax" in p for p in check("def (:\n").problems)
     assert any("os.system" in p for p in check("import os\nos.system('ls')\nfrom simsmith_contract import write_result\nwrite_result({})\n").problems)
     assert any("eval" in p for p in check("eval('1')\nwrite_result({})\n").problems)
+
+
+# ---- diagnosis 2026-10-25: getattr/setattr narrowing (false-positive fix) -----------
+def test_preflight_accepts_getattr_setattr_with_literal_name_on_safe_target():
+    # Common honest idioms: getattr/setattr with a literal attribute name on a plain
+    # local object that has nothing to do with os/sys/simsmith_contract.
+    src = ("import argparse\nimport mujoco\nfrom simsmith_contract import write_result\n"
+          "ns = argparse.Namespace(tol=1e-3)\n"
+          "tol = getattr(ns, 'tol', 1e-3)\n"
+          "setattr(ns, 'extra', True)\n"
+          "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    assert check(src).ok
+
+
+def test_preflight_still_rejects_getattr_with_non_literal_attribute_name():
+    # The original bypass this ban exists for: a computed string instead of a literal.
+    src = ("import os\nimport mujoco\nfrom simsmith_contract import write_result\n"
+          "getattr(os, 'sys' + 'tem')('id')\n"
+          "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not result.ok
+    assert any("getattr" in p for p in result.problems)
+
+
+def test_preflight_still_rejects_getattr_on_os_even_with_literal_name():
+    src = ("import os\nimport mujoco\nfrom simsmith_contract import write_result\n"
+          "getattr(os, 'system')('id')\n"
+          "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not result.ok
+    assert any("getattr" in p for p in result.problems)
+
+
+def test_preflight_still_rejects_getattr_on_aliased_os():
+    src = ("import os as _o\nimport mujoco\nfrom simsmith_contract import write_result\n"
+          "getattr(_o, 'system')('id')\n"
+          "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not result.ok
+    assert any("getattr" in p for p in result.problems)
+
+
+def test_preflight_still_rejects_getattr_on_simsmith_contract_alias():
+    src = ("import simsmith_contract as sc\nimport mujoco\n"
+          "fn = getattr(sc, '_measure_from_mujoco')\n"
+          "mujoco.mj_step(1, 2)\nsc.write_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not result.ok
+    assert any("getattr" in p for p in result.problems)
+
+
+def test_preflight_still_rejects_getattr_dunder_even_with_literal_name():
+    src = ("import mujoco\nfrom simsmith_contract import write_result\n"
+          "class C:\n    pass\n"
+          "d = getattr(C(), '__dict__')\n"
+          "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not result.ok
+    assert any("getattr" in p for p in result.problems)
+
+
+def test_preflight_open_and_vars_remain_banned_outright():
+    # Unlike getattr/setattr, these have no safe literal-shape to narrow to -- stay
+    # banned regardless (see preflight.py's comment above BANNED_CALLS).
+    src = ("import mujoco\nfrom simsmith_contract import write_result\n"
+          "f = open('scene.xml')\n"
+          "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    assert any("open" in p for p in check(src).problems)
+    src2 = ("import argparse\nimport mujoco\nfrom simsmith_contract import write_result\n"
+           "args = argparse.Namespace()\nprint(vars(args))\n"
+           "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    assert any("vars" in p for p in check(src2).problems)
+
+
+# ---- diagnosis 2026-10-25: static undefined-name check (catches the missing-import
+# NameError class of crash statically, before any sim time is spent) -----------------
+def test_preflight_catches_missing_numpy_import():
+    src = ("import os\nimport mujoco\nfrom simsmith_contract import write_result\n"
+          "jacp = np.zeros((3, 7))\n"
+          "mujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not result.ok
+    assert any("name 'np' is not defined" in p and "add the import" in p for p in result.problems)
+
+
+def test_preflight_undefined_name_zero_false_positives_on_examples():
+    # The two hand-written reference scripts the real generator is modeled on --
+    # must never be flagged by the undefined-name check.
+    for path in ("examples/reach_mujoco.py", "examples/pick_place_mujoco.py"):
+        with open(path, encoding="utf-8") as f:
+            src = f.read()
+        result = check(src)
+        assert not any("is not defined" in p for p in result.problems), (path, result.problems)
+
+
+def test_preflight_undefined_name_accepts_common_honest_idioms():
+    # Nested function, comprehension variable, for-loop target, with-as, except-as,
+    # walrus, class method using self/cls, lambda param, global decl -- none of these
+    # should ever be flagged as "undefined", even conflated across scopes.
+    src = '''
+import os
+import mujoco
+from simsmith_contract import write_result
+
+COUNTER = 0
+
+def helper(steps, tol=1e-3):
+    global COUNTER
+    COUNTER += 1
+    squares = [i * i for i in range(steps)]
+    total = sum(squares)
+    try:
+        with open("/dev/null") as f:
+            pass
+    except OSError as e:
+        total = total
+    if (n := len(squares)) > 0:
+        total += n
+    return total
+
+class Controller:
+    def __init__(self, gain):
+        self.gain = gain
+
+    def step(self, err):
+        return err * self.gain
+
+sq = lambda x: x * x
+ctrl = Controller(gain=0.1)
+mujoco.mj_step(1, 2)
+write_result({"ee_pos": [0, 0, 0]})
+'''
+    result = check(src)
+    assert not any("is not defined" in p for p in result.problems), result.problems
+
+
+def test_preflight_undefined_name_skips_star_imports():
+    # A star-import's names aren't knowable statically -- must not false-positive.
+    src = ("from math import *\nimport mujoco\nfrom simsmith_contract import write_result\n"
+          "x = sqrt(4)\nmujoco.mj_step(1, 2)\nwrite_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not any("is not defined" in p for p in result.problems)
+
+
+def test_preflight_undefined_name_still_blocks_adversarial_scripts_for_their_own_reasons():
+    # The undefined-name check must not interfere with (or substitute for) the
+    # existing, dedicated rejections for the five adversarial scripts.
+    for script_const in (CHEAT_MONKEYPATCH_MEASUREMENT, CHEAT_FAKE_MJ_TRACKED_ENTRY,
+                        CHEAT_SHADOW_WRITE_RESULT):
+        result = check(code(script_const))
+        assert not result.ok
 
 
 def test_preflight_allowlist_catches_unknown_isaac_module():
@@ -278,6 +514,33 @@ def test_preflight_mujoco_attr_check_respects_import_alias():
     assert any("mj_fake_hallucinated_call" in p for p in result.problems)
 
 
+def test_preflight_accepts_explicitly_imported_submodule_attrs():
+    # mujoco.viewer is real but, unlike most of the mujoco API, is NOT pulled in by a
+    # bare `import mujoco` -- hasattr(mujoco, "viewer") is False until something does
+    # `import mujoco.viewer`. A script that does exactly that and then calls a real
+    # attribute of it (launch_passive) must not be flagged as hallucinated.
+    src = ("import mujoco\nimport mujoco.viewer\nfrom simsmith_contract import write_result\n"
+          "mujoco.viewer.launch_passive(1, 2)\nmujoco.mj_step(1, 2)\n"
+          "write_result({'ee_pos': [0, 0, 0]})\n")
+    assert check(src).ok
+
+
+def test_preflight_accepts_from_mujoco_import_submodule():
+    src = ("import mujoco\nfrom mujoco import viewer\nfrom simsmith_contract import write_result\n"
+          "viewer.launch_passive(1, 2)\nmujoco.mj_step(1, 2)\n"
+          "write_result({'ee_pos': [0, 0, 0]})\n")
+    assert check(src).ok
+
+
+def test_preflight_still_rejects_invented_attr_on_real_submodule():
+    src = ("import mujoco\nimport mujoco.viewer\nfrom simsmith_contract import write_result\n"
+          "mujoco.viewer.launch_invented_fn(1, 2)\nmujoco.mj_step(1, 2)\n"
+          "write_result({'ee_pos': [0, 0, 0]})\n")
+    result = check(src)
+    assert not result.ok
+    assert any("launch_invented_fn" in p for p in result.problems)
+
+
 # ---- real examples still pass preflight + the full runtime/verifier pipeline --------
 def test_real_reach_mujoco_example_passes_preflight_and_verify():
     with open(os.path.join(ROOT, "examples", "reach_mujoco.py"), encoding="utf-8") as f:
@@ -323,6 +586,54 @@ def test_runner_no_result_file():
     assert not r.ok and "no result file" in r.error
 
 
+def test_runner_captures_exit_code_and_full_stdout_stderr():
+    # Every run (pass or fail) must carry its exit code and full captured stdout/stderr,
+    # not just the truncated `error` tail -- that's what lets a results JSON reconstruct
+    # exactly what a candidate's subprocess did, after the fact.
+    ok = SubprocessRunner("", 20).run(code(GOOD), seed=3)
+    assert ok.ok and ok.exit_code == 0
+
+    crash_src = "import sys\nprint('hello stdout')\nsys.stderr.write('boom stderr')\nraise RuntimeError('boom')\n"
+    bad = SubprocessRunner("", 20).run(crash_src, seed=0)
+    assert not bad.ok and bad.exit_code == 1
+    assert "hello stdout" in bad.stdout
+    assert "boom stderr" in bad.stderr
+    assert "boom" in bad.error
+
+    timeout = SubprocessRunner("", 1).run("import time\ntime.sleep(5)\n", seed=0)
+    assert not timeout.ok and timeout.exit_code is None
+
+
+def test_candidate_log_persists_full_code_preflight_and_per_seed_runs(tmp_path):
+    # Part 0 of the 2026-10-24 diagnosis: a results JSON must persist every candidate's
+    # full code, preflight result, and per-seed stdout/stderr/exit -- not just a pass/fail
+    # summary -- so a crash can be diagnosed without rerunning it.
+    llm = MockLLM([GOOD])
+    pipe = make_pipe(tmp_path, llm, seeds=(0, 1))
+    res = pipe.solve("reach the target", n_candidates=1, do_repair=False, use_library=False)
+    c = res.candidates[0]
+    log = candidate_log(c)
+    assert log["script"] == c.script and log["script"].strip()
+    assert log["preflight_ok"] is True and log["preflight_problems"] == []
+    assert len(log["runs"]) == 2
+    for seed, run in zip((0, 1), log["runs"]):
+        assert run["seed"] == seed
+        assert run["exit_code"] == 0
+        assert run["ok"] is True
+        # GOOD's own stdout is whatever reach_mujoco.py prints (nothing), but the key
+        # must always be present so a results JSON schema doesn't vary run to run.
+        assert "stdout" in run and "stderr" in run and "error" in run
+
+    # a preflight-rejected candidate never runs, but must still log the rejection reason.
+    bad_pipe = make_pipe(tmp_path, MockLLM([BANNED]))
+    bad_res = bad_pipe.solve("reach the target", n_candidates=1, do_repair=False, use_library=False)
+    bad_c = bad_res.candidates[0]
+    bad_log = candidate_log(bad_c)
+    assert bad_log["preflight_ok"] is False
+    assert any("banned import" in p for p in bad_log["preflight_problems"])
+    assert bad_log["runs"] == []  # never executed, so no per-seed runs to report
+
+
 # ---- library / docs -------------------------------------------------------
 def test_library_roundtrip_and_template_filter(tmp_path):
     lib = Library(str(tmp_path / "lib.jsonl"))
@@ -365,6 +676,21 @@ def test_pipeline_selects_by_execution_not_by_order(tmp_path):
     assert sum(1 for c in res.candidates if c.score and c.score.crashes == 3) == 1
     assert len(pipe.library) == 1
 
+
+def test_generate_propagates_usage_tag_into_its_worker_pool(tmp_path):
+    # Pipeline.generate() dispatches the N candidates through its own ThreadPoolExecutor.
+    # A caller's llm.set_tag() (e.g. a baseline script tagging a whole solve() call for
+    # usage attribution) lives in THAT caller's thread-local and does not automatically
+    # reach the pool's worker threads -- generate() must explicitly carry it over, or a
+    # concurrent caller's usage rows silently lose their tag (real bug, found the hard way
+    # scripting eval/results cost accounting).
+    llm = MockLLM([GOOD] * 5)
+    pipe = make_pipe(tmp_path, llm)
+    llm.set_tag("my-tag")
+    pipe.solve("reach the target", n_candidates=5, do_repair=False, use_library=False)
+    # intake + plan (2, run in this thread) + 5 generate calls (in worker threads) = 7
+    assert len(llm.seen_tags) == 7
+    assert all(tag == "my-tag" for tag in llm.seen_tags)
 
 def test_pipeline_repair_rescues_failing_candidates(tmp_path):
     llm = MockLLM([WRONG, WRONG], repair_outputs=[GOOD, GOOD])
