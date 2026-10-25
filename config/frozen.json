@@ -1,0 +1,17 @@
+{
+  "_comment": "The single reference config eval/run_eval.py runs under. Every field here except n_candidates/max_repairs (each condition's own intended variable -- see eval/run_eval.py's CONDITIONS dict) must match exactly what a real run is about to do, or run_eval.py refuses to start. Change a value here deliberately (it shows up in git diff) rather than overriding it ad hoc via env/CLI.",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "reasoning": "off",
+  "max_tokens": {
+    "generate": 24000,
+    "repair": 8000,
+    "plan": 3000,
+    "intake": 3000
+  },
+  "temperature": [0.2, 0.4, 0.6, 0.8, 1.0],
+  "seeds": [0, 1, 2, 3, 4],
+  "n_candidates": 5,
+  "max_repairs": 2,
+  "workers": 8,
+  "prompt_version": "mujoco-v5"
+}

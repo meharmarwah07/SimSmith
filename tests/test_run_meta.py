@@ -17,7 +17,7 @@ import baseline_dev  # noqa: E402
 
 SCHEMA_KEYS = ("condition", "model", "reasoning", "prompt_version", "classifier_version",
               "n_candidates", "max_repairs", "max_tokens", "temperature", "seeds",
-              "workers", "git_commit", "date")
+              "workers", "config_hash", "git_commit", "date")
 
 
 def test_build_run_meta_has_every_schema_field():

@@ -60,14 +60,17 @@ def test_report_written_with_per_task_rows(tmp_path):
 def test_rows_carry_run_meta_schema(tmp_path):
     llm = MockLLM([GOOD] * 200)
     rep = run_eval(factory(llm), TASKS, ["single_shot"], 500, str(tmp_path), str(tmp_path / "l.jsonl"),
-                   extra_payload={"chat_template_kwargs": {"enable_thinking": False}}, workers=3)
+                   extra_payload={"chat_template_kwargs": {"enable_thinking": False}}, workers=3,
+                   config_hash="abc123")
     row = rep["conditions"]["single_shot"]["rows"][0]
     for key in ("condition", "model", "reasoning", "prompt_version", "classifier_version",
                "n_candidates", "max_repairs", "max_tokens", "temperature", "seeds",
-               "workers", "git_commit", "date"):
+               "workers", "config_hash", "git_commit", "date"):
         assert key in row, key
     assert row["condition"] == "single_shot"
     assert row["reasoning"] == "off"
     assert row["n_candidates"] == 1
     assert row["workers"] == 3
+    assert row["config_hash"] == "abc123"
+    assert rep["config_hash"] == "abc123"
     assert "n_candidates_generated" in row  # the actual count, distinct from the configured target

@@ -67,10 +67,14 @@ def reasoning_mode(extra_payload: dict | None) -> str:
 
 def build_run_meta(*, condition: str, cfg: Config, extra_payload: dict | None,
                    n_candidates: int, max_repairs: int, model: str = "",
-                   workers: int | None = None) -> dict:
+                   workers: int | None = None, config_hash: str | None = None) -> dict:
     """The fields every result row must carry (see module docstring). Callers merge
     this dict into their own per-row dict; collisions with a caller's own fields of
-    the same name are a bug in the caller, not handled here on purpose."""
+    the same name are a bug in the caller, not handled here on purpose.
+
+    config_hash identifies the config/frozen.json a run was checked against (see
+    simsmith/frozen_config.py) -- None for callers that don't use a frozen config
+    (currently scripts/baseline_dev.py and scripts/baseline_best_of_5.py)."""
     if condition not in VALID_CONDITIONS:
         raise ValueError(f"unknown condition {condition!r}; add it to VALID_CONDITIONS "
                          "if this is a genuinely new condition")
@@ -86,6 +90,7 @@ def build_run_meta(*, condition: str, cfg: Config, extra_payload: dict | None,
         "temperature": list(prompts.TEMPERATURES) if n_candidates > 1 else [0.3],
         "seeds": list(cfg.seeds),
         "workers": workers,
+        "config_hash": config_hash,
         "git_commit": git_commit(),
         "date": datetime.now(timezone.utc).isoformat(),
     }
