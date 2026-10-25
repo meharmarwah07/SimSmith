@@ -4,5 +4,6 @@ __pycache__/
 .pytest_cache/
 eval/results/*.json
 eval/results/*.jsonl
+eval/results/backfilled/
 library.jsonl
 runs/

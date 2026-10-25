@@ -1,9 +1,9 @@
 """Three-condition evaluation on held-out tasks.
 
 Conditions
-  single_shot       : 1 candidate, no repair, no library
-  best_of_5         : 5 candidates + repair, no library
-  best_of_5_library : 5 candidates + repair + library of VERIFIED DEV scripts
+  single_shot               : 1 candidate, no repair, no library
+  best_of_5_repair          : 5 candidates + repair, no library
+  best_of_5_repair_library  : 5 candidates + repair + library of VERIFIED DEV scripts
 
 Honesty rules baked in
   * The library is built only from dev tasks, then frozen. Held-out runs never
@@ -30,19 +30,21 @@ from simsmith.library import Library  # noqa: E402
 from simsmith.llm import TokenFactoryLLM  # noqa: E402
 from simsmith.pipeline import Pipeline  # noqa: E402
 from simsmith.preflight import load_allowlist  # noqa: E402
+from simsmith.run_meta import build_run_meta  # noqa: E402
 from simsmith.runner import SubprocessRunner  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 CONDITIONS = {
     "single_shot": dict(n_candidates=1, use_library=False, do_repair=False),
-    "best_of_5": dict(n_candidates=5, use_library=False, do_repair=True),
-    "best_of_5_library": dict(n_candidates=5, use_library=True, do_repair=True),
+    "best_of_5_repair": dict(n_candidates=5, use_library=False, do_repair=True),
+    "best_of_5_repair_library": dict(n_candidates=5, use_library=True, do_repair=True),
 }
+_MAX_REPAIRS_BY_CONDITION = {"single_shot": 0, "best_of_5_repair": 2, "best_of_5_repair_library": 2}
 
 
 def run_eval(make_pipeline, tasks: dict, conditions: list, max_runs: int, out_dir: str,
-             library_path: str) -> dict:
+             library_path: str, extra_payload: dict | None = None, workers: int | None = None) -> dict:
     """make_pipeline(library) -> (Pipeline). Returns the result dict (also written to disk)."""
     os.makedirs(out_dir, exist_ok=True)
     report = {"started": time.time(), "max_runs": max_runs, "truncated": False,
@@ -50,21 +52,25 @@ def run_eval(make_pipeline, tasks: dict, conditions: list, max_runs: int, out_di
     lib = Library(library_path)
     pipe_for_runs = make_pipeline(lib)
     runner = pipe_for_runs.runner
+    extra_payload = extra_payload or {}
 
     def over_budget() -> bool:
         return runner.runs >= max_runs
 
     # Build the library from DEV tasks (only needed for the library condition).
-    if "best_of_5_library" in conditions:
+    if "best_of_5_repair_library" in conditions:
         for t in tasks["dev"]:
             if over_budget():
                 report["truncated"] = True
                 break
-            pipe_for_runs.solve(t["task"], save_to_library=True, **CONDITIONS["best_of_5_library"])
+            pipe_for_runs.solve(t["task"], save_to_library=True, **CONDITIONS["best_of_5_repair_library"])
         report["library_size_at_heldout"] = len(lib)
 
     for cond in conditions:
         rows = []
+        run_meta = build_run_meta(condition=cond, cfg=pipe_for_runs.cfg, extra_payload=extra_payload,
+                                  n_candidates=CONDITIONS[cond]["n_candidates"],
+                                  max_repairs=_MAX_REPAIRS_BY_CONDITION[cond], workers=workers)
         for t in tasks["heldout"]:
             if over_budget():
                 report["truncated"] = True
@@ -76,8 +82,9 @@ def run_eval(make_pipeline, tasks: dict, conditions: list, max_runs: int, out_di
                 "id": t["id"], "template": res.template, "status": res.status,
                 "success_rate": w.score.success_rate if w and w.score else 0.0,
                 "winner_stage": w.stage if w else None,
-                "n_candidates": len(res.candidates),
+                "n_candidates_generated": len(res.candidates),
                 "preflight_rejects": sum(1 for c in res.candidates if not c.preflight_ok),
+                **run_meta,
             })
         verified = sum(1 for r in rows if r["status"] == "VERIFIED")
         report["conditions"][cond] = {
@@ -113,12 +120,16 @@ def main() -> None:
     ap.add_argument("--conditions", nargs="+", default=list(CONDITIONS), choices=list(CONDITIONS))
     ap.add_argument("--allowlist", default="docs_index/isaac_api_allowlist.txt")
     ap.add_argument("--isaac-version", default=os.environ.get("SIMSMITH_ISAAC_VERSION", "unset"))
+    ap.add_argument("--extra-payload", default="", help="JSON dict merged into every LLM request, "
+                    'e.g. \'{"chat_template_kwargs": {"enable_thinking": false}}\'')
+    ap.add_argument("--workers", type=int, default=1)
     args = ap.parse_args()
+    extra_payload = json.loads(args.extra_payload) if args.extra_payload else {}
 
     cfg = Config.from_env()
     with open(os.path.join(HERE, "tasks.json"), encoding="utf-8") as f:
         tasks = json.load(f)
-    llm = TokenFactoryLLM(cfg.base_url, cfg.api_key)
+    llm = TokenFactoryLLM(cfg.base_url, cfg.api_key, extra_payload=extra_payload)
     runner = SubprocessRunner(cfg.sim_python, cfg.run_timeout_s)
     docs = DocIndex("docs_index")
     allow = load_allowlist(args.allowlist)
@@ -128,7 +139,7 @@ def main() -> None:
 
     lib_path = os.path.join(HERE, "results", f"library_{int(time.time())}.jsonl")
     report = run_eval(make_pipeline, tasks, args.conditions, args.max_runs,
-                      os.path.join(HERE, "results"), lib_path)
+                      os.path.join(HERE, "results"), lib_path, extra_payload, args.workers)
     print_summary(report)
 
 

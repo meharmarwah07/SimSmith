@@ -39,6 +39,7 @@ from simsmith.library import Library  # noqa: E402
 from simsmith.llm import TokenFactoryLLM  # noqa: E402
 from simsmith.pipeline import Pipeline, candidate_log  # noqa: E402
 from simsmith.prompts import PROMPT_VERSION  # noqa: E402
+from simsmith.run_meta import build_run_meta  # noqa: E402
 from simsmith.runner import SubprocessRunner  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -71,7 +72,7 @@ def _load_progress(progress_path: str) -> dict:
 
 
 def _do_one(template: str, task: dict, run_idx: int, n_runs: int, llm, runner, docs, cfg,
-           usage_path: str, progress_path: str, max_repairs: int) -> dict:
+           usage_path: str, progress_path: str, max_repairs: int, workers: int = 1) -> dict:
     tag = f"{template}:{task['id']}:{run_idx}"
     llm.set_tag(tag)
     lib = Library(os.path.join(HERE, f"_baseline_unused_{template}.jsonl"))
@@ -106,13 +107,16 @@ def _do_one(template: str, task: dict, run_idx: int, n_runs: int, llm, runner, d
         "winner_stage": winner.stage if winner else None,
         "winner_round": winner_round,
         "failure_classification": None if res.status == "VERIFIED" else failure_class,
-        "n_candidates": len(res.candidates),
+        "n_candidates_generated": len(res.candidates),
         "hallucinated_by_round": dict(hallucinated_by_round),
         "candidates": per_candidate,
         "prompt_tokens": sum(r["prompt_tokens"] for r in usage_rows),
         "completion_tokens": sum(r["completion_tokens"] for r in usage_rows),
         "cost_usd": cost_usd, "price_known": price_known,
         "wall_seconds": wall,
+        **build_run_meta(condition=("best_of_5_repair" if max_repairs > 0 else "best_of_5"),
+                         cfg=cfg, extra_payload=llm.extra_payload, n_candidates=5,
+                         max_repairs=max_repairs, workers=workers),
     }
     with _progress_lock:
         with open(progress_path, "a", encoding="utf-8") as f:
@@ -148,7 +152,7 @@ def run_all(jobs_by_template: dict, llm, runner, docs, cfg,
         print(f"\nrunning {len(jobs)} task-run(s) with {workers} parallel workers...", flush=True)
         with ThreadPoolExecutor(max_workers=workers) as pool:
             futures = [pool.submit(_do_one, template, task, run_idx, runs_per_task[template],
-                                   llm, runner, docs, cfg, usage_path, progress_path, max_repairs)
+                                   llm, runner, docs, cfg, usage_path, progress_path, max_repairs, workers)
                       for template, task, run_idx in jobs]
             for future in as_completed(futures):
                 row = future.result()
@@ -278,7 +282,8 @@ def main() -> int:
 
     report = {
         "prompt_version": PROMPT_VERSION, "tag": args.tag, "extra_payload": extra_payload,
-        "condition": "best_of_5", "max_repairs": args.max_repairs,
+        "condition": ("best_of_5_repair" if args.max_repairs > 0 else "best_of_5"),
+        "max_repairs": args.max_repairs,
         "model": cfg.model_generate, "sim_python": sim_python, "sim_seeds": list(cfg.seeds),
         "timestamp": ts, "summaries": summaries, "rows": all_rows,
     }

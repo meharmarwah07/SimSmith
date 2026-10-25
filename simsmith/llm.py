@@ -62,6 +62,13 @@ def _max_tokens_for(kind: str) -> int:
     return int(os.environ.get(env_key, default))
 
 
+def max_tokens_config() -> dict:
+    """The actual max_tokens in effect for every call kind right now (after any
+    SIMSMITH_MAX_TOKENS_<KIND> override) -- for stamping into a result row, see
+    simsmith/run_meta.py."""
+    return {kind: _max_tokens_for(kind) for kind in DEFAULT_MAX_TOKENS}
+
+
 def _budget_from_env() -> float | None:
     raw = os.environ.get("SIMSMITH_BUDGET_USD", "")
     return float(raw) if raw else None

@@ -392,7 +392,7 @@ class MockLLM:
     guaranteed once calls are concurrent -- just so concurrent calls don't corrupt
     shared state or double-count)."""
 
-    def __init__(self, generate_outputs, repair_outputs=None, intake=None):
+    def __init__(self, generate_outputs, repair_outputs=None, intake=None, extra_payload=None):
         self.generate_outputs = list(generate_outputs)
         self.repair_outputs = list(repair_outputs or [])
         self.intake = intake or {"template": "reach", "exact_match": True, "gap": "", "goal": "reach target"}
@@ -400,6 +400,7 @@ class MockLLM:
         self._lock = threading.Lock()
         self._tls = threading.local()
         self.seen_tags = []  # tag observed by each complete() call, same TokenFactoryLLM contract
+        self.extra_payload = extra_payload or {}  # same public attribute real TokenFactoryLLM has
 
     def set_tag(self, tag) -> None:
         self._tls.tag = tag

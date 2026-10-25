@@ -31,6 +31,7 @@ from simsmith.library import Library  # noqa: E402
 from simsmith.llm import TokenFactoryLLM  # noqa: E402
 from simsmith.pipeline import Pipeline, candidate_log  # noqa: E402
 from simsmith.prompts import PROMPT_VERSION  # noqa: E402
+from simsmith.run_meta import build_run_meta  # noqa: E402
 from simsmith.runner import SubprocessRunner  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -148,7 +149,7 @@ _progress_lock = threading.Lock()
 
 
 def _do_one(template: str, task: dict, i: int, n: int, llm, runner, docs, cfg,
-           usage_path: str, progress_path: str) -> dict:
+           usage_path: str, progress_path: str, workers: int = 1) -> dict:
     tag = f"{template}:{i}"
     llm.set_tag(tag)
     lib = Library(os.path.join(HERE, f"_baseline_unused_{template}.jsonl"))
@@ -175,6 +176,8 @@ def _do_one(template: str, task: dict, i: int, n: int, llm, runner, docs, cfg,
         "completion_tokens": sum(r["completion_tokens"] for r in usage_rows),
         "cost_usd": cost_usd, "price_known": price_known,
         "wall_seconds": wall,
+        **build_run_meta(condition="single_shot", cfg=cfg, extra_payload=llm.extra_payload,
+                         n_candidates=1, max_repairs=0, workers=workers),
     }
     with _progress_lock:
         with open(progress_path, "a", encoding="utf-8") as f:
@@ -207,7 +210,7 @@ def run_all(dev_by_template: dict, n: int, llm, runner, docs, cfg,
         print(f"\nrunning {len(jobs)} generation(s) with {workers} parallel workers...", flush=True)
         with ThreadPoolExecutor(max_workers=workers) as pool:
             futures = {pool.submit(_do_one, template, task, i, n, llm, runner, docs, cfg,
-                                   usage_path, progress_path): template
+                                   usage_path, progress_path, workers): template
                       for template, task, i in jobs}
             for future in as_completed(futures):
                 row = future.result()  # exceptions surface here, deliberately not swallowed
@@ -321,6 +324,7 @@ def main() -> int:
     report = {
         "prompt_version": PROMPT_VERSION,
         "tag": args.tag,
+        "condition": "single_shot",
         "extra_payload": extra_payload,
         "model": cfg.model_generate,
         "sim_python": sim_python,
