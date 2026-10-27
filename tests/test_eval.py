@@ -45,8 +45,35 @@ def test_budget_cap_truncates_and_flags(tmp_path):
 
 def test_conditions_configured_as_documented():
     assert CONDITIONS["single_shot"] == dict(n_candidates=1, use_library=False, do_repair=False)
+    assert CONDITIONS["best_of_5"] == dict(n_candidates=5, use_library=False, do_repair=False)
     assert CONDITIONS["best_of_5_repair"]["use_library"] is False and CONDITIONS["best_of_5_repair"]["do_repair"]
     assert CONDITIONS["best_of_5_repair_library"]["use_library"] is True
+    # best_of_5 isolates diversity from repair: same n_candidates as best_of_5_repair,
+    # repair off -- the only difference between the two conditions.
+    assert CONDITIONS["best_of_5"]["n_candidates"] == CONDITIONS["best_of_5_repair"]["n_candidates"]
+    assert CONDITIONS["best_of_5"]["do_repair"] is False and CONDITIONS["best_of_5_repair"]["do_repair"] is True
+
+
+def test_best_of_5_no_repair_condition_runs_with_mocked_llm(tmp_path):
+    llm = MockLLM([GOOD] * 200)
+    rep = run_eval(factory(llm), TASKS, ["best_of_5"], 500, str(tmp_path), str(tmp_path / "l.jsonl"))
+    cond = rep["conditions"]["best_of_5"]
+    assert cond["tasks_run"] == 2
+    assert cond["verified_rate"] == 1.0
+    row = cond["rows"][0]
+    assert row["condition"] == "best_of_5"
+    assert row["n_candidates"] == 5
+    assert row["max_repairs"] == 0
+    assert row["winner_stage"] == "generated"  # no repair possible in this condition
+
+
+def test_estimate_cost_per_task_run_for_best_of_5_no_repair():
+    reach_cost = estimate_cost_per_task_run("best_of_5", "reach", 5)
+    assert reach_cost > 0
+    # a real measurement (see _EMPIRICAL_MEAN_COST_PER_TASK_RUN), not the scaled fallback
+    assert reach_cost == 0.0116
+    pick_place_cost = estimate_cost_per_task_run("best_of_5", "pick_place", 5)
+    assert 0 < pick_place_cost < estimate_cost_per_task_run("best_of_5_repair", "pick_place", 5)
 
 
 def test_report_written_with_per_task_rows(tmp_path):

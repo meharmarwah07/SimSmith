@@ -1,7 +1,11 @@
-"""Three-condition evaluation on held-out tasks.
+"""Four-condition evaluation on held-out tasks.
 
 Conditions
   single_shot               : 1 candidate, no repair, no library
+  best_of_5                 : 5 candidates, no repair, no library -- isolates the
+                               effect of candidate diversity (best-of-N selection)
+                               from repair; compare against best_of_5_repair to see
+                               what repair adds on top of diversity alone.
   best_of_5_repair          : 5 candidates + repair, no library
   best_of_5_repair_library  : 5 candidates + repair + library of VERIFIED DEV scripts
 
@@ -9,7 +13,7 @@ Honesty rules baked in
   * The library is built only from dev tasks, then frozen. Held-out runs never
     write to it.
   * A hard cap on total sim executions (--max-runs) and total $ spend
-    (--budget-usd, checked against TokenFactoryLLM.spent_usd/budget_usd -- see
+    (--max-usd, checked against TokenFactoryLLM.spent_usd/budget_usd -- see
     simsmith/llm.py) protect the credit budget; if either is hit, the report says
     it was truncated, and says which cap. Task-runs are submitted in a bounded
     sliding window of at most --workers in flight, re-checking both caps as each
@@ -67,10 +71,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 CONDITIONS = {
     "single_shot": dict(n_candidates=1, use_library=False, do_repair=False),
+    "best_of_5": dict(n_candidates=5, use_library=False, do_repair=False),
     "best_of_5_repair": dict(n_candidates=5, use_library=False, do_repair=True),
     "best_of_5_repair_library": dict(n_candidates=5, use_library=True, do_repair=True),
 }
-_MAX_REPAIRS_BY_CONDITION = {"single_shot": 0, "best_of_5_repair": 2, "best_of_5_repair_library": 2}
+_MAX_REPAIRS_BY_CONDITION = {"single_shot": 0, "best_of_5": 0, "best_of_5_repair": 2,
+                            "best_of_5_repair_library": 2}
 
 # Empirical mean cost_usd/task-run, Super reasoning off (config/frozen.json), from
 # this project's own real measured runs -- used ONLY to print a pre-run ESTIMATE; the
@@ -79,10 +85,18 @@ _MAX_REPAIRS_BY_CONDITION = {"single_shot": 0, "best_of_5_repair": 2, "best_of_5
 # _FALLBACK_COST_PER_CANDIDATE * n_candidates.
 _EMPIRICAL_MEAN_COST_PER_TASK_RUN = {
     ("single_shot", "reach"): 0.0025,            # eval/results/baseline_1792933477.json
+    ("best_of_5", "reach"): 0.0116,              # eval/results/best_of_5_1792933573.json
     ("best_of_5_repair", "reach"): 0.0169,       # eval/results/best_of_5_1792933674.json
     ("best_of_5_repair", "pick_place"): 0.0273,  # eval/results/best_of_5_1792933958.json, _1792936413.json
 }
 _LIBRARY_COST_MULTIPLIER = 1.15  # best_of_5_repair_library ~= best_of_5_repair + a couple extra prompt examples
+# best_of_5/pick_place has never actually been measured under the current mujoco-v5
+# prompt -- scaled from best_of_5_repair/pick_place by the ratio this project HAS
+# measured for reach (best_of_5 norepair / best_of_5_repair = 0.0116/0.0169 = 0.683),
+# since pick_place's own no-repair:repair cost ratio is unmeasured. Flagged, not a
+# real measurement -- update this once a real best_of_5/pick_place run exists.
+_NOREPAIR_TO_REPAIR_RATIO = _EMPIRICAL_MEAN_COST_PER_TASK_RUN[("best_of_5", "reach")] / \
+                           _EMPIRICAL_MEAN_COST_PER_TASK_RUN[("best_of_5_repair", "reach")]
 _FALLBACK_COST_PER_CANDIDATE = 0.0025  # ~= single_shot/reach's own single-candidate cost
 
 
@@ -94,6 +108,10 @@ def estimate_cost_per_task_run(condition: str, template: str, n_candidates: int)
         base = _EMPIRICAL_MEAN_COST_PER_TASK_RUN.get(("best_of_5_repair", template))
         if base is not None:
             return base * _LIBRARY_COST_MULTIPLIER
+    if condition == "best_of_5":
+        base = _EMPIRICAL_MEAN_COST_PER_TASK_RUN.get(("best_of_5_repair", template))
+        if base is not None:
+            return base * _NOREPAIR_TO_REPAIR_RATIO
     return _FALLBACK_COST_PER_CANDIDATE * max(n_candidates, 1)
 
 
@@ -400,7 +418,8 @@ def print_summary(report: dict) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-runs", type=int, default=300, help="hard cap on sim executions")
-    ap.add_argument("--budget-usd", type=float, default=None, help="hard cap on $ spend "
+    ap.add_argument("--max-usd", type=float, default=None, help="hard, fail-closed cap on $ "
+                    "spend -- a call is blocked BEFORE it runs once spent_usd reaches this "
                     "(default: SIMSMITH_BUDGET_USD env, or uncapped if neither is set)")
     ap.add_argument("--repeats", type=int, default=5, help="times each heldout task is "
                     "run per condition")
@@ -476,7 +495,7 @@ def main() -> None:
 
     usage_log_path = os.path.join(results_dir, f"eval_usage_{int(time.time())}.jsonl")
     llm = TokenFactoryLLM(cfg.base_url, cfg.api_key, extra_payload=extra_payload,
-                          budget_usd=args.budget_usd, usage_log_path=usage_log_path)
+                          budget_usd=args.max_usd, usage_log_path=usage_log_path)
     runner = SubprocessRunner(cfg.sim_python, cfg.run_timeout_s)
     docs = DocIndex("docs_index")
     allow = load_allowlist(args.allowlist)
