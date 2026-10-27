@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import os
 import threading
+import time
 
 from simsmith import prompts
 
@@ -392,7 +393,8 @@ class MockLLM:
     guaranteed once calls are concurrent -- just so concurrent calls don't corrupt
     shared state or double-count)."""
 
-    def __init__(self, generate_outputs, repair_outputs=None, intake=None, extra_payload=None):
+    def __init__(self, generate_outputs, repair_outputs=None, intake=None, extra_payload=None,
+                budget_usd=None, usage_log_path=None, cost_per_call=0.001):
         self.generate_outputs = list(generate_outputs)
         self.repair_outputs = list(repair_outputs or [])
         self.intake = intake or {"template": "reach", "exact_match": True, "gap": "", "goal": "reach target"}
@@ -401,6 +403,14 @@ class MockLLM:
         self._tls = threading.local()
         self.seen_tags = []  # tag observed by each complete() call, same TokenFactoryLLM contract
         self.extra_payload = extra_payload or {}  # same public attribute real TokenFactoryLLM has
+        self.budget_usd = budget_usd  # same public attributes real TokenFactoryLLM has
+        self.spent_usd = 0.0          # (eval/run_eval.py's _budget_exceeded() reads these)
+        # Optional: mirrors TokenFactoryLLM's usage-log contract just enough for tests
+        # that exercise cost tracking (eval/run_eval.py reads back llm.usage_log_path)
+        # without needing a real HTTP call -- every complete() appends one fixed-cost
+        # row tagged with get_tag(), same shape real usage.jsonl rows have.
+        self.usage_log_path = usage_log_path
+        self.cost_per_call = cost_per_call
 
     def set_tag(self, tag) -> None:
         self._tls.tag = tag
@@ -408,9 +418,27 @@ class MockLLM:
     def get_tag(self):
         return getattr(self._tls, "tag", None)
 
+    def _log_usage(self, kind: str) -> None:
+        if not self.usage_log_path:
+            return
+        tag = self.get_tag()
+        with self._lock:
+            self.spent_usd += self.cost_per_call
+            record = {"ts": time.time(), "model": "mock", "kind": kind, "tag": tag,
+                     "prompt_tokens": 10, "completion_tokens": 10,
+                     "cost_usd": self.cost_per_call, "price_known": True,
+                     "seconds": 0.0, "finish_reason": "stop",
+                     "cumulative_spent_usd": self.spent_usd}
+            dirname = os.path.dirname(self.usage_log_path)
+            if dirname:
+                os.makedirs(dirname, exist_ok=True)
+            with open(self.usage_log_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(record) + "\n")
+
     def complete(self, system, user, model="", temperature=0.5, max_tokens=None, *, kind="generate"):
         with self._lock:
             self.seen_tags.append(self.get_tag())
+        self._log_usage(kind)
         if system == prompts.INTAKE_SYSTEM:
             with self._lock:
                 self.calls["intake"] += 1

@@ -5,7 +5,9 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from eval.run_eval import CONDITIONS, run_eval  # noqa: E402
+from eval.run_eval import (  # noqa: E402
+    CONDITIONS, build_jobs, estimate_cost_per_task_run, run_eval,
+)
 from simsmith.config import Config  # noqa: E402
 from simsmith.docs import DocIndex  # noqa: E402
 from simsmith.pipeline import Pipeline  # noqa: E402
@@ -74,3 +76,95 @@ def test_rows_carry_run_meta_schema(tmp_path):
     assert row["config_hash"] == "abc123"
     assert rep["config_hash"] == "abc123"
     assert "n_candidates_generated" in row  # the actual count, distinct from the configured target
+
+
+# ---- step D: repeats, resume/checkpointing, cost estimate, budget cap ----------
+
+
+def test_build_jobs_respects_repeats():
+    jobs = build_jobs(TASKS, ["single_shot", "best_of_5_repair"], repeats=3)
+    assert len(jobs) == 2 * 2 * 3  # 2 conditions * 2 heldout tasks * 3 repeats
+    assert sum(1 for j in jobs if j["condition"] == "single_shot" and j["task_id"] == "h1") == 3
+
+
+def test_estimate_cost_per_task_run_known_and_fallback():
+    known = estimate_cost_per_task_run("best_of_5_repair", "reach", 5)
+    assert known > 0
+    fallback = estimate_cost_per_task_run("single_shot", "some_unmeasured_template", 1)
+    assert fallback > 0
+    # best_of_5_repair_library with no direct measurement falls back to
+    # best_of_5_repair's own number (scaled), not the generic per-candidate fallback.
+    lib_est = estimate_cost_per_task_run("best_of_5_repair_library", "reach", 5)
+    assert lib_est > known
+
+
+def test_resume_does_not_repeat_completed_task_runs(tmp_path):
+    llm = MockLLM([GOOD] * 200)
+    progress_path = str(tmp_path / "progress.jsonl")
+    lib_path = str(tmp_path / "l.jsonl")
+
+    rep1 = run_eval(factory(llm), TASKS, ["single_shot"], 500, str(tmp_path), lib_path,
+                    progress_path=progress_path)
+    assert rep1["conditions"]["single_shot"]["tasks_run"] == 2
+    calls_after_first = dict(llm.calls)
+
+    # A second invocation against the SAME progress file must not re-solve either
+    # heldout task -- their rows are loaded from disk, not recomputed.
+    rep2 = run_eval(factory(llm), TASKS, ["single_shot"], 500, str(tmp_path), lib_path,
+                    progress_path=progress_path)
+    assert rep2["conditions"]["single_shot"]["tasks_run"] == 2
+    assert llm.calls == calls_after_first  # zero additional LLM calls on resume
+
+
+def test_resume_does_not_rebuild_an_already_persisted_library_entry(tmp_path):
+    llm = MockLLM([GOOD] * 200)
+    progress_path = str(tmp_path / "progress.jsonl")
+    lib_path = str(tmp_path / "l.jsonl")
+
+    run_eval(factory(llm), TASKS, ["best_of_5_repair_library"], 500, str(tmp_path), lib_path,
+            progress_path=progress_path)
+    with open(lib_path) as f:
+        n_lib_lines_after_first = len(f.readlines())
+    assert n_lib_lines_after_first == 1  # the one dev task
+
+    run_eval(factory(llm), TASKS, ["best_of_5_repair_library"], 500, str(tmp_path), lib_path,
+            progress_path=progress_path)
+    with open(lib_path) as f:
+        assert len(f.readlines()) == n_lib_lines_after_first  # not duplicated on resume
+
+
+def test_repeats_produces_n_rows_per_heldout_task(tmp_path):
+    llm = MockLLM([GOOD] * 200)
+    rep = run_eval(factory(llm), TASKS, ["single_shot"], 500, str(tmp_path), str(tmp_path / "l.jsonl"),
+                   repeats=3)
+    assert rep["conditions"]["single_shot"]["tasks_run"] == 2 * 3  # 2 heldout tasks * 3 repeats
+
+
+def test_cost_is_read_back_from_the_llms_own_usage_log_path(tmp_path):
+    # Regression test: run_eval() must resolve usage_path from pipe.llm.usage_log_path
+    # itself, not invent its own -- a mismatch here silently makes every cost_usd None.
+    usage_log_path = str(tmp_path / "usage.jsonl")
+    llm = MockLLM([GOOD] * 200, usage_log_path=usage_log_path)
+    rep = run_eval(factory(llm), TASKS, ["single_shot"], 500, str(tmp_path), str(tmp_path / "l.jsonl"))
+    rows = rep["conditions"]["single_shot"]["rows"]
+    assert all(r["price_known"] for r in rows), rows
+    assert all(r["cost_usd"] is not None and r["cost_usd"] > 0 for r in rows), rows
+    assert rep["conditions"]["single_shot"]["total_cost_usd"] > 0
+    assert rep["total_cost_usd"] > 0
+
+
+def test_bounded_submission_does_not_overshoot_budget_cap_by_more_than_one_window(tmp_path):
+    # Many repeats, workers=1 (one in flight at a time), a budget tight enough to
+    # stop partway through -- total_sim_runs must not run every repeat regardless.
+    llm = MockLLM([GOOD] * 200, budget_usd=0.0001)
+    llm.spent_usd = 0.0  # starts under budget; a real TokenFactoryLLM would raise
+                        # BudgetExceeded on its first priced call instead of ever
+                        # incrementing spent_usd past the cap -- MockLLM doesn't
+                        # price anything, so this test exercises the OTHER cap
+                        # (max_runs) as the actually-triggering one, confirming the
+                        # bounded-submission loop (not a submit-everything-upfront
+                        # loop) is what's enforcing it.
+    rep = run_eval(factory(llm), TASKS, ["single_shot"], 2, str(tmp_path), str(tmp_path / "l.jsonl"),
+                   repeats=10, workers=1)
+    assert rep["truncated"] is True
+    assert rep["total_sim_runs"] <= 2 + 2  # at most one task-run's worth of overshoot
