@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SimSmith</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">SimSmith</span>
+  </div>
+  <div class="topbar-right">
+    <div class="mode-pill present-hide" id="mode-pill">loading&hellip;</div>
+    <a class="nav-link present-hide" href="/results">Eval results &rarr;</a>
+    <button id="present-toggle" class="btn btn-ghost" type="button" aria-pressed="false">Present mode</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel hero-panel" aria-label="Task input">
+    <h1 class="hero-title">What should the robot do?</h1>
+    <textarea id="task-input" class="hero-input" rows="2"
+      placeholder="Describe what the robot should do&hellip;"></textarea>
+
+    <div class="examples" id="examples" aria-label="Example tasks"></div>
+
+    <div class="run-row">
+      <button id="run-btn" class="btn btn-primary btn-hero">Run</button>
+      <span id="run-hint" class="hint present-hide"></span>
+    </div>
+  </section>
+
+  <section class="panel stage-strip-panel stage-strip" aria-label="Pipeline stages" id="stage-strip">
+    <div class="stage-item" data-stage="intake"><span class="stage-dot"></span><span class="stage-label">Intake</span></div>
+    <div class="stage-item" data-stage="generate"><span class="stage-dot"></span><span class="stage-label">Generate</span></div>
+    <div class="stage-item" data-stage="preflight"><span class="stage-dot"></span><span class="stage-label">Pre-flight</span></div>
+    <div class="stage-item" data-stage="execute"><span class="stage-dot"></span><span class="stage-label">Execute</span></div>
+    <div class="stage-item" data-stage="verify"><span class="stage-dot"></span><span class="stage-label">Verify</span></div>
+    <div class="stage-item" data-stage="repair"><span class="stage-dot"></span><span class="stage-label">Repair</span></div>
+  </section>
+
+  <section class="panel counters" id="counters" aria-label="Run counters">
+    <div class="counter"><span class="counter-value" id="c-seconds">&mdash;</span><span class="counter-label">seconds</span></div>
+    <div class="counter"><span class="counter-value" id="c-tokens">&mdash;</span><span class="counter-label">tokens</span></div>
+    <div class="counter"><span class="counter-value" id="c-cost">&mdash;</span><span class="counter-label">dollars</span></div>
+    <div class="counter"><span class="counter-value" id="c-simruns">&mdash;</span><span class="counter-label">sim runs</span></div>
+    <div class="counter library-counter"><span class="counter-value" id="c-library">&mdash;</span><span class="counter-label">Library: verified scripts</span></div>
+  </section>
+
+  <section class="panel" id="status-panel" aria-live="polite">
+    <div id="empty-state" class="empty-state">
+      <p>No run yet. Pick an example task or type your own, then press Run.</p>
+    </div>
+    <div id="loading-state" class="loading-state hidden">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Running the pipeline&hellip; this takes a few seconds.</p>
+    </div>
+    <div id="error-state" class="error-state hidden"></div>
+
+    <div id="result-state" class="result-state hidden">
+      <div id="source-badge" class="source-badge"></div>
+      <div class="result-header">
+        <div id="template-badge" class="template-badge"></div>
+        <div id="outcome-banner" class="outcome-banner"></div>
+      </div>
+      <p id="notes" class="notes"></p>
+
+      <h2 class="section-title">Candidates</h2>
+      <div id="candidates" class="candidates-grid"></div>
+
+      <h2 class="section-title">Repair timeline</h2>
+      <div id="timeline" class="timeline"></div>
+
+      <h2 class="section-title" id="winner-title">Winner</h2>
+      <div id="winner" class="winner-panel"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="backend-panel" aria-label="Backend comparison">
+    <h2 class="section-title">Backend comparison (speed, coverage, stability)</h2>
+    <p class="hint" id="backend-fidelity-note"></p>
+    <div class="table-scroll">
+      <table class="data-table" id="backend-table">
+        <thead>
+          <tr>
+            <th scope="col">Backend</th>
+            <th scope="col">Seconds/run</th>
+            <th scope="col">Pass rate (hand-written)</th>
+            <th scope="col">Tasks covered</th>
+            <th scope="col">Setup notes</th>
+            <th scope="col">Source</th>
+          </tr>
+        </thead>
+        <tbody id="backend-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>Local demo &mdash; runs entirely on 127.0.0.1</span>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
