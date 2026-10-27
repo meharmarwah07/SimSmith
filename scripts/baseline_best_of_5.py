@@ -41,6 +41,12 @@ from simsmith.pipeline import Pipeline, candidate_log  # noqa: E402
 from simsmith.prompts import PROMPT_VERSION  # noqa: E402
 from simsmith.run_meta import build_run_meta  # noqa: E402
 from simsmith.runner import SubprocessRunner  # noqa: E402
+from simsmith.tavily import client_from_env as tavily_client_from_env  # noqa: E402
+
+# SIMSMITH_TAVILY=1 (+ TAVILY_API_KEY) opts a dev baseline run into the plan-step
+# Tavily hook; off by default. Built once, not per-task-run -- see
+# simsmith.tavily.client_from_env()'s own docstring for what "off" means here.
+_TAVILY_CLIENT = tavily_client_from_env()
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from baseline_dev import classify, wilson_interval, usage_rows_for_tag, cost_summary  # noqa: E402
@@ -76,7 +82,7 @@ def _do_one(template: str, task: dict, run_idx: int, n_runs: int, llm, runner, d
     tag = f"{template}:{task['id']}:{run_idx}"
     llm.set_tag(tag)
     lib = Library(os.path.join(HERE, f"_baseline_unused_{template}.jsonl"))
-    pipe = Pipeline(llm, runner, lib, docs, cfg)
+    pipe = Pipeline(llm, runner, lib, docs, cfg, tavily_client=_TAVILY_CLIENT)
     t0 = time.time()
     res = pipe.solve(task["task"], n_candidates=5, use_library=False,
                      do_repair=max_repairs > 0, max_repairs=max_repairs, save_to_library=False)

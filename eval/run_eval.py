@@ -482,6 +482,11 @@ def main() -> None:
     allow = load_allowlist(args.allowlist)
 
     def make_pipeline(lib):
+        # tavily_client intentionally omitted (defaults to None, i.e. off): the three
+        # official conditions (CONDITIONS above) must never make a Tavily call
+        # regardless of SIMSMITH_TAVILY, so this never calls
+        # simsmith.tavily.client_from_env() -- only a future, separately requested
+        # tavily_on condition would pass one in here.
         return Pipeline(llm, runner, lib, docs, cfg, allow or None, args.isaac_version)
 
     report = run_eval(make_pipeline, tasks, args.conditions, args.max_runs, results_dir,

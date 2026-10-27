@@ -439,3 +439,21 @@ def research_failure_modes(task: str, template: str, client: TavilyClient,
                               source_url=url, source_title=title) for title, snippet, url in candidates]
 
     return FailureModes(template=template, task=task, items=items, queries_used=used, dropped=dropped)
+
+
+def client_from_env() -> "TavilyClient | None":
+    """The standard way a caller opts into the plan-step Tavily hook (see
+    Pipeline.plan()'s tavily_client= parameter in simsmith/pipeline.py): returns a
+    real TavilyClient only when BOTH SIMSMITH_TAVILY=1 is set AND a TAVILY_API_KEY is
+    actually present -- None in every other case, meaning "stay off." The default
+    posture is off: a caller that never calls this (or that calls it without setting
+    SIMSMITH_TAVILY=1) sees no behavior change at all. Never raises -- a missing/bad
+    key with SIMSMITH_TAVILY=1 set degrades to "off," not a crash."""
+    if os.environ.get("SIMSMITH_TAVILY") != "1":
+        return None
+    if not os.environ.get("TAVILY_API_KEY"):
+        return None
+    try:
+        return TavilyClient()
+    except TavilyError:
+        return None
