@@ -1,0 +1,274 @@
+{
+  "result": {
+    "task": "Move the arm's gripper to the target point.",
+    "template": {
+      "name": "reach",
+      "robot": "franka_panda",
+      "description": "Move the arm end effector to a target position."
+    },
+    "exact_match": true,
+    "gap": "",
+    "plan": "1. setup\n2. move\n3. report",
+    "candidates": [
+      {
+        "idx": 0,
+        "attempts": [
+          {
+            "idx": 0,
+            "stage": "generated",
+            "framing": "Prefer the simplest, most direct implementation.",
+            "temperature": 0.2,
+            "script": "import mujoco\nfrom simsmith_contract import get_task, write_result\nm = mujoco.MjModel.from_xml_string(\"\"\"\n<mujoco>\n  <option gravity=\"0 0 0\"/>\n  <worldbody>\n    <body name=\"hand\">\n      <freejoint/>\n      <geom type=\"sphere\" size=\"0.01\"/>\n    </body>\n  </worldbody>\n</mujoco>\n\"\"\")\nd = mujoco.MjData(m)\ntarget = get_task(\"reach\")[\"target_pos\"]\nd.qpos[:3] = target\nmujoco.mj_forward(m, d)\nfor _ in range(20):\n    mujoco.mj_step(m, d)\nhand = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\nwrite_result({\"ee_pos\": d.xpos[hand].tolist(), \"target_pos\": target})\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "verified",
+            "score": {
+              "ok": true,
+              "success_rate": 1.0,
+              "crashes": 0,
+              "mean_seconds": 0.27842990557352704,
+              "failure_text": "",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          }
+        ]
+      },
+      {
+        "idx": 1,
+        "attempts": [
+          {
+            "idx": 1,
+            "stage": "generated",
+            "framing": "Prefer a structured implementation with small helper functions and explicit phases.",
+            "temperature": 0.4,
+            "script": "import mujoco\nfrom simsmith_contract import get_task, write_result\nm = mujoco.MjModel.from_xml_string(\"\"\"\n<mujoco>\n  <option gravity=\"0 0 0\"/>\n  <worldbody>\n    <body name=\"hand\">\n      <freejoint/>\n      <geom type=\"sphere\" size=\"0.01\"/>\n    </body>\n  </worldbody>\n</mujoco>\n\"\"\")\nd = mujoco.MjData(m)\ntarget = get_task(\"reach\")[\"target_pos\"]\nd.qpos[:3] = [target[0] + 0.5, target[1], target[2]]  # deliberately placed 0.5m off\nmujoco.mj_forward(m, d)\nfor _ in range(20):\n    mujoco.mj_step(m, d)\nhand = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\nwrite_result({\"ee_pos\": d.xpos[hand].tolist(), \"target_pos\": target})\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "failed_verification",
+            "score": {
+              "ok": false,
+              "success_rate": 0.0,
+              "crashes": 0,
+              "mean_seconds": 0.28339823087056476,
+              "failure_text": "seed 0: task not achieved: ee-target distance 0.5000 m (need <= 0.02)\nseed 1: task not achieved: ee-target distance 0.5000 m (need <= 0.02)\nseed 2: task not achieved: ee-target distance 0.5000 m (need <= 0.02)",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.5000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.5000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.5000 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          },
+          {
+            "idx": 1,
+            "stage": "repaired",
+            "framing": "Prefer a structured implementation with small helper functions and explicit phases.",
+            "temperature": 0.3,
+            "script": "import mujoco\nfrom simsmith_contract import get_task, write_result\nm = mujoco.MjModel.from_xml_string(\"\"\"\n<mujoco>\n  <option gravity=\"0 0 0\"/>\n  <worldbody>\n    <body name=\"hand\">\n      <freejoint/>\n      <geom type=\"sphere\" size=\"0.01\"/>\n    </body>\n  </worldbody>\n</mujoco>\n\"\"\")\nd = mujoco.MjData(m)\ntarget = get_task(\"reach\")[\"target_pos\"]\nd.qpos[:3] = target\nmujoco.mj_forward(m, d)\nfor _ in range(20):\n    mujoco.mj_step(m, d)\nhand = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\nwrite_result({\"ee_pos\": d.xpos[hand].tolist(), \"target_pos\": target})\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "verified",
+            "score": {
+              "ok": true,
+              "success_rate": 1.0,
+              "crashes": 0,
+              "mean_seconds": 0.3371272087097168,
+              "failure_text": "",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          }
+        ]
+      },
+      {
+        "idx": 2,
+        "attempts": [
+          {
+            "idx": 2,
+            "stage": "generated",
+            "framing": "Be defensive: add settling steps and check intermediate states before moving on.",
+            "temperature": 0.6,
+            "script": "from simsmith_contract import write_result\nraise RuntimeError(\"AttributeError: module has no attribute hallucinated_fn\")\n",
+            "preflight_ok": false,
+            "preflight_problems": [
+              "script never calls write_result(final_state)",
+              "script must import mujoco and call mj_step(...) to advance the simulation; reporting a position without ever stepping physics forward in time is not accepted"
+            ],
+            "status": "rejected_preflight",
+            "score": null,
+            "clip_path": null
+          }
+        ]
+      },
+      {
+        "idx": 3,
+        "attempts": [
+          {
+            "idx": 3,
+            "stage": "generated",
+            "framing": "Prefer the approach used in the reference examples as closely as possible.",
+            "temperature": 0.8,
+            "script": "import subprocess\nfrom simsmith_contract import write_result\nwrite_result({\"ee_pos\": [0, 0, 0], \"target_pos\": [0, 0, 0]})\n",
+            "preflight_ok": false,
+            "preflight_problems": [
+              "banned import: subprocess",
+              "script must import mujoco and call mj_step(...) to advance the simulation; reporting a position without ever stepping physics forward in time is not accepted"
+            ],
+            "status": "rejected_preflight",
+            "score": null,
+            "clip_path": null
+          }
+        ]
+      },
+      {
+        "idx": 4,
+        "attempts": [
+          {
+            "idx": 4,
+            "stage": "generated",
+            "framing": "Think about what commonly goes wrong in this kind of task and guard against it.",
+            "temperature": 1.0,
+            "script": "import mujoco\nfrom simsmith_contract import write_result\nm = mujoco.MjModel.from_xml_string(\"\"\"\n<mujoco>\n  <option gravity=\"0 0 0\"/>\n  <worldbody>\n    <body name=\"hand\">\n      <freejoint/>\n      <geom type=\"sphere\" size=\"0.01\"/>\n    </body>\n  </worldbody>\n</mujoco>\n\"\"\")\nd = mujoco.MjData(m)\nfor _ in range(20):\n    mujoco.mj_step(m, d)\nwrite_result({\"success\": True})\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "failed_verification",
+            "score": {
+              "ok": false,
+              "success_rate": 0.0,
+              "crashes": 3,
+              "mean_seconds": 0.28301215171813965,
+              "failure_text": "seed 0: result missing keys ['ee_pos', 'target_pos']. Expected final_state = {'ee_pos': [x,y,z], 'target_pos': [x,y,z]}  (world frame, metres)\nseed 1: result missing keys ['ee_pos', 'target_pos']. Expected final_state = {'ee_pos': [x,y,z], 'target_pos': [x,y,z]}  (world frame, metres)\nseed 2: result missing keys ['ee_pos', 'target_pos']. Expected final_state = {'ee_pos': [x,y,z], 'target_pos': [x,y,z]}  (world frame, metres)",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "crash",
+                  "detail": "missing keys ['ee_pos', 'target_pos']"
+                },
+                {
+                  "seed": 1,
+                  "status": "crash",
+                  "detail": "missing keys ['ee_pos', 'target_pos']"
+                },
+                {
+                  "seed": 2,
+                  "status": "crash",
+                  "detail": "missing keys ['ee_pos', 'target_pos']"
+                }
+              ]
+            },
+            "clip_path": null
+          },
+          {
+            "idx": 4,
+            "stage": "repaired",
+            "framing": "Think about what commonly goes wrong in this kind of task and guard against it.",
+            "temperature": 0.3,
+            "script": "import mujoco\nfrom simsmith_contract import get_task, write_result\nm = mujoco.MjModel.from_xml_string(\"\"\"\n<mujoco>\n  <option gravity=\"0 0 0\"/>\n  <worldbody>\n    <body name=\"hand\">\n      <freejoint/>\n      <geom type=\"sphere\" size=\"0.01\"/>\n    </body>\n  </worldbody>\n</mujoco>\n\"\"\")\nd = mujoco.MjData(m)\ntarget = get_task(\"reach\")[\"target_pos\"]\nd.qpos[:3] = target\nmujoco.mj_forward(m, d)\nfor _ in range(20):\n    mujoco.mj_step(m, d)\nhand = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\nwrite_result({\"ee_pos\": d.xpos[hand].tolist(), \"target_pos\": target})\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "verified",
+            "score": {
+              "ok": true,
+              "success_rate": 1.0,
+              "crashes": 0,
+              "mean_seconds": 0.3249146143595378,
+              "failure_text": "",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0000 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          }
+        ]
+      }
+    ],
+    "winner": {
+      "idx": 0,
+      "attempt": 0
+    },
+    "status": "VERIFIED",
+    "notes": [],
+    "repair_rounds": [
+      {
+        "candidate_idx": 1,
+        "attempt": 1,
+        "before_status": "failed_verification",
+        "after_status": "verified"
+      },
+      {
+        "candidate_idx": 4,
+        "attempt": 1,
+        "before_status": "failed_verification",
+        "after_status": "verified"
+      }
+    ],
+    "library_size": 1,
+    "elapsed_s": 4.550143718719482,
+    "tokens": 0,
+    "cost_usd": 0.0,
+    "sim_runs": 15,
+    "source": "mock",
+    "model": null,
+    "prompt_version": "mujoco-v1",
+    "date": "2026-01-01"
+  }
+}

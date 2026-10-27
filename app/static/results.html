@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SimSmith — Eval results</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-name">SimSmith</span>
+  </div>
+  <div class="topbar-right">
+    <a class="nav-link" href="/">&larr; Back to demo</a>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel" aria-label="Eval results">
+    <h1 class="section-title">Eval results</h1>
+    <p class="caption">n is small on dev tasks; intervals are wide. Grouped by model &rarr; template &rarr; prompt version &rarr; condition, newest runs first.</p>
+    <p class="hint" id="results-meta"></p>
+
+    <div id="results-empty" class="empty-state hidden">No result files found.</div>
+    <div id="results-errors" class="error-state hidden" aria-live="polite"></div>
+    <div id="classifier-banner" class="classifier-banner hidden" aria-live="polite"></div>
+
+    <label class="older-runs-toggle">
+      <input type="checkbox" id="show-older-toggle">
+      Show older runs (older prompt versions)
+    </label>
+
+    <div class="fail-legend-key" id="fail-legend-key" aria-label="Failure breakdown color key">
+      <span class="legend-item"><span class="legend-swatch legend-pass"></span>pass</span>
+      <span class="legend-item"><span class="legend-swatch legend-crash"></span>crash</span>
+      <span class="legend-item"><span class="legend-swatch legend-hallucinated_api"></span>hallucinated_api</span>
+      <span class="legend-item"><span class="legend-swatch legend-wrong_logic"></span>wrong_logic</span>
+      <span class="legend-item"><span class="legend-swatch legend-no_simulation"></span>no_simulation</span>
+      <span class="legend-item"><span class="legend-swatch legend-truncation"></span>truncation</span>
+      <span class="legend-item"><span class="legend-swatch legend-preflight_other"></span>preflight_other</span>
+      <span class="legend-item"><span class="legend-swatch legend-task_param_mismatch"></span>task_param_mismatch</span>
+      <span class="legend-item"><span class="legend-swatch legend-other"></span>other/unlabeled</span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="data-table hidden" id="results-table">
+        <thead>
+          <tr>
+            <th scope="col">Condition</th>
+            <th scope="col">Date</th>
+            <th scope="col">Pass rate (95% CI)</th>
+            <th scope="col">n</th>
+            <th scope="col">Mean seconds</th>
+            <th scope="col">Mean cost</th>
+            <th scope="col">Failure breakdown</th>
+            <th scope="col">File</th>
+          </tr>
+        </thead>
+        <tbody id="results-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" aria-label="Conditions chart">
+    <h2 class="section-title">Conditions chart</h2>
+    <p class="caption">Pass rate with a Wilson 95% interval per condition, one block per model + template.</p>
+    <div id="conditions-empty" class="empty-state hidden">No conditions data found.</div>
+    <div id="conditions-blocks"></div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>Local demo &mdash; runs entirely on 127.0.0.1</span>
+</footer>
+
+<script src="/results.js"></script>
+</body>
+</html>

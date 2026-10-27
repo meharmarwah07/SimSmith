@@ -1,0 +1,32 @@
+{
+  "note": "Real-world fidelity not tested. These numbers compare how fast and how consistently each backend runs SimSmith's own hand-written template scripts in this environment -- they say nothing about how closely any backend's physics matches a real robot.",
+  "backends": [
+    {
+      "backend": "MuJoCo (CPU, this repo)",
+      "seconds_per_run": 0.575,
+      "pass_rate_handwritten": 1.0,
+      "setup_notes": "100 of 100 on fresh seeds for both reach and pick_place, about 0.5-0.65s/run (WSL, CPU). Already installed in this worktree; no GPU and no license step. This is the backend every mode of this demo (--mock, --replay, live) actually runs.",
+      "tasks_covered": ["reach", "pick_place"],
+      "source": "measured",
+      "measured": true
+    },
+    {
+      "backend": "Newton",
+      "seconds_per_run": 12.5,
+      "pass_rate_handwritten": 1.0,
+      "setup_notes": "Hand-written scripts, not LLM-generated; measured 2026-10-22/23. XPBD physics; needs collapse_fixed_joints=True or the solver diverges to NaN. About 9s of the ~12.5s/run is kinematic IK only. No pick_place support yet -- reach only.",
+      "tasks_covered": ["reach"],
+      "source": "measured",
+      "measured": true
+    },
+    {
+      "backend": "Isaac Sim (GPU)",
+      "seconds_per_run": null,
+      "pass_rate_handwritten": null,
+      "setup_notes": "Not installed in this environment, so no numbers were collected here. SimSmith already targets part of its API surface -- see docs_index/isaac_api_allowlist.txt.",
+      "tasks_covered": [],
+      "source": "not measured",
+      "measured": false
+    }
+  ]
+}
