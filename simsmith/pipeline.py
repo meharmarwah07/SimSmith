@@ -8,7 +8,9 @@ they can be added without touching the generated-script contract.
 from __future__ import annotations
 
 import json
+import os
 import re
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 
@@ -18,6 +20,7 @@ from .docs import DocIndex
 from .library import Library
 from .llm import LLM, LLMError
 from .preflight import check as preflight_check
+from .recorder import record_clip
 from .runner import SubprocessRunner
 from .templates import TEMPLATES, closest_template
 from .verifier import Score, verify
@@ -76,6 +79,8 @@ class SolveResult:
     winner: Candidate | None
     status: str                         # VERIFIED | PARTIAL | FAILED
     notes: list = field(default_factory=list)
+    clip_path: str | None = None        # set only on request (solve(record_clip=True)) and
+                                         # only once the winner is VERIFIED -- see solve()
 
 
 class Pipeline:
@@ -200,7 +205,8 @@ class Pipeline:
 
     # full run
     def solve(self, task: str, n_candidates: int = 5, use_library: bool = True,
-              do_repair: bool = True, max_repairs: int = 2, save_to_library: bool = True) -> SolveResult:
+              do_repair: bool = True, max_repairs: int = 2, save_to_library: bool = True,
+              record_clip: bool = False, clip_dir: str = "eval/results/clips") -> SolveResult:
         template, exact, gap, goal = self.intake(task)
         plan = self.plan(goal, template)
         cands = self.generate(goal, template, plan, n_candidates, use_library)
@@ -220,10 +226,13 @@ class Pipeline:
         scored = [c for c in cands if c.score is not None]
         scored.sort(key=lambda c: (c.score.ok, c.score.success_rate, -c.score.mean_seconds), reverse=True)
         winner = scored[0] if scored else None
+        clip_path = None
         if winner and winner.score.ok:
             status = "VERIFIED"
             if save_to_library:
                 self.library.add(goal, template, winner.script, winner.score.success_rate, self.isaac_version)
+            if record_clip:
+                clip_path = self._record_winner_clip(winner, template, clip_dir)
         elif winner and winner.score.success_rate > 0:
             status = "PARTIAL"
             notes.append("No candidate met the pass bar; returning the best partial result.")
@@ -232,4 +241,22 @@ class Pipeline:
             notes.append("No candidate achieved the task on any seed.")
         if not exact:
             notes.append(f"Request mapped to closest supported template '{template}'. Gap: {gap}")
-        return SolveResult(task, template, exact, gap, plan, cands, winner, status, notes)
+        return SolveResult(task, template, exact, gap, plan, cands, winner, status, notes, clip_path)
+
+    def _record_winner_clip(self, winner: Candidate, template: str, clip_dir: str) -> str | None:
+        """Re-runs the already-VERIFIED winner once more purely to render a GIF for
+        human viewing (see simsmith/recorder.py) -- this NEVER changes winner.score or
+        the VERIFIED status above; a recording failure is swallowed here and simply
+        leaves SolveResult.clip_path as None, exactly like record_clip() swallows its
+        own failures and never raises."""
+        if not winner.runs:
+            return None
+        run_id = f"{template}_{uuid.uuid4().hex[:12]}"
+        out_path = os.path.join(clip_dir, f"{run_id}.gif")
+        try:
+            result = record_clip(winner.script, seed=winner.runs[0].seed, template=template,
+                                 cmd=self.runner.cmd, out_path=out_path,
+                                 perturb=winner.runs[0].perturb)
+        except Exception:
+            return None  # belt-and-suspenders -- record_clip() itself never raises
+        return result["clip_path"] if result.get("ok") else None
