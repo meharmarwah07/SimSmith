@@ -92,6 +92,17 @@ GETATTR_SETATTR_SENSITIVE_MODULES = BANNED_MODULES | {"os", "sys"}
 SIMSMITH_CONTRACT_PUBLIC_API = {"get_task", "get_rng", "get_perturb", "write_result"}
 ISAAC_ROOTS = ("omni", "isaacsim", "pxr", "isaaclab")
 
+# --- skills ablation (pick_place-only; runtime/simsmith_skills.py) --------------
+# move_to()/set_gripper() call the (hooked) mujoco.mj_step internally for every real
+# step they take -- see that module's docstring -- so a script that only calls THEM,
+# never mj_step itself, still genuinely simulates. This AST walk can't see inside
+# simsmith_skills.py (it only parses the candidate script), so without naming these
+# two here, a skills-only script would be statically (and wrongly) rejected below as
+# "never steps physics." Scoped to exactly these two names from exactly this one
+# module -- nothing else about simsmith_skills, or anything about simsmith_contract's
+# own restricted public API above, is affected by this.
+SIMSMITH_SKILLS_STEPPING_HELPERS = {"move_to", "set_gripper"}
+
 
 @dataclass
 class PreflightResult:
@@ -365,6 +376,16 @@ def check(script: str, api_allowlist: set | None = None) -> PreflightResult:
     calls_mj_step = False
     _getattr_sensitive_aliases = _sensitive_getattr_setattr_aliases(tree)
     _getattr_contract_aliases = _bound_aliases_for_module(tree, "simsmith_contract")
+    # see SIMSMITH_SKILLS_STEPPING_HELPERS above: local names bound to move_to/
+    # set_gripper via `from simsmith_skills import ...` (respecting `as` aliases), plus
+    # any `import simsmith_skills [as x]` module alias for the `x.move_to(...)` form.
+    _skills_stepping_aliases = set()
+    _skills_module_aliases = _bound_aliases_for_module(tree, "simsmith_skills")
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == "simsmith_skills":
+            for a in node.names:
+                if a.name in SIMSMITH_SKILLS_STEPPING_HELPERS:
+                    _skills_stepping_aliases.add(a.asname or a.name)
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for a in node.names:
@@ -397,7 +418,7 @@ def check(script: str, api_allowlist: set | None = None) -> PreflightResult:
                     problems.append(f"banned call: {node.func.id}()")
                 if node.func.id == "write_result":
                     calls_write = True
-                if node.func.id == "mj_step":
+                if node.func.id == "mj_step" or node.func.id in _skills_stepping_aliases:
                     calls_mj_step = True
             elif isinstance(node.func, ast.Attribute):
                 d = _dotted(node.func)
@@ -407,6 +428,9 @@ def check(script: str, api_allowlist: set | None = None) -> PreflightResult:
                         problems.append(f"banned call: {d}()")
                     if parts[-1] == "write_result":
                         calls_write = True
+                    if (len(parts) >= 2 and parts[0] in _skills_module_aliases
+                            and parts[1] in SIMSMITH_SKILLS_STEPPING_HELPERS):
+                        calls_mj_step = True
                 if node.func.attr == "mj_step":
                     calls_mj_step = True
     if not calls_write:
