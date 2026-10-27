@@ -134,6 +134,11 @@ class Pipeline:
                     f"Report at the end: {t.state_help}", f"Plan:\n{plan}", f"Style: {framing}"]
             if scene_card:
                 user.append(f"Scene reference (ground truth, from the real XML):\n{scene_card}")
+            if template == "pick_place":
+                user.append(prompts.PICK_PLACE_SKILLS_BLOCK)
+                skills_doc = self.docs.skills_doc(template)
+                if skills_doc:
+                    user.append(f"Skills reference (ground truth):\n{skills_doc}")
             if slice_:
                 user.append("Reference material (MuJoCo API notes/gotchas):\n" + "\n---\n".join(slice_))
             for ex in examples:
@@ -177,6 +182,11 @@ class Pipeline:
         user = [f"Task: {goal}", f"Script:\n```python\n{c.script}```", f"Failure output:\n{failure}"]
         if scene_card:
             user.append(f"Scene reference (ground truth, from the real XML):\n{scene_card}")
+        if template == "pick_place":
+            user.append(prompts.PICK_PLACE_SKILLS_BLOCK)
+            skills_doc = self.docs.skills_doc(template)
+            if skills_doc:
+                user.append(f"Skills reference (ground truth):\n{skills_doc}")
         if docs:
             user.append("Reference material (MuJoCo API notes/gotchas):\n" + "\n---\n".join(docs[:3]))
         user = "\n\n".join(user)

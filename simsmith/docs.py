@@ -16,6 +16,7 @@ class DocIndex:
         self.directory = directory
         self.chunks = []
         self._scene_cards: dict = {}  # template -> full file content, cached
+        self._skills_docs: dict = {}  # template -> full file content, cached
         if os.path.isdir(directory):
             for name in sorted(os.listdir(directory)):
                 path = os.path.join(directory, name)
@@ -42,4 +43,19 @@ class DocIndex:
             with open(path, encoding="utf-8", errors="ignore") as f:
                 text = f.read()
         self._scene_cards[template] = text
+        return text
+
+    def skills_doc(self, template: str) -> str:
+        """Full content of docs_index/skills_<template>.md (signatures/units/gotchas
+        for runtime/simsmith_skills.py's trusted helpers, when that template has any --
+        currently pick_place only). Empty string if the file doesn't exist, same as a
+        template with no skills ablation. Read whole, same reasoning as scene_card()."""
+        if template in self._skills_docs:
+            return self._skills_docs[template]
+        path = os.path.join(self.directory, f"skills_{template}.md")
+        text = ""
+        if os.path.isfile(path):
+            with open(path, encoding="utf-8", errors="ignore") as f:
+                text = f.read()
+        self._skills_docs[template] = text
         return text

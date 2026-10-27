@@ -129,3 +129,25 @@ FRAMINGS = [
     "Think about what commonly goes wrong in this kind of task and guard against it.",
 ]
 TEMPERATURES = [0.2, 0.4, 0.6, 0.8, 1.0]
+
+
+# =================================================================================
+# Skills ablation (pick_place only). Appended by Pipeline.generate()/repair() to the
+# USER message, never baked into GENERATE_SYSTEM/REPAIR_SYSTEM above -- those stay
+# byte-identical to PROMPT_VERSION "mujoco-v5" for BOTH templates, so MockLLM's exact
+# system-string dispatch (tests/mocks.py) and every existing reach measurement under
+# that version stay valid. reach never sees this block. Label results produced with
+# it as PICK_PLACE_SKILLS_PROMPT_VERSION, not the global PROMPT_VERSION above, since
+# this is an additive, pick_place-only change to the user content, not a new version
+# of the shared system prompt text.
+PICK_PLACE_SKILLS_PROMPT_VERSION = "mujoco-v6-skills"
+
+PICK_PLACE_SKILLS_BLOCK = """For this pick_place task, trusted helper functions are also available via
+`from simsmith_skills import ...` (same import style as simsmith_contract):
+body_pos, arm_jacobian, ik_step, move_to, set_gripper. Their exact signatures, units,
+and gotchas are in the reference material below -- read it before using them. They
+are low-level primitives, not a plan: no helper picks a grasp height, a waypoint, a
+settle duration, or how many times to re-aim -- that sequencing is still yours to
+write, exactly as it would be without them. Using them is optional; you may write
+your own arm control with raw mujoco calls instead if you prefer."""
+# =================================================================================
