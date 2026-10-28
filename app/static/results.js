@@ -384,6 +384,46 @@ function renderConditionRow(condition, runs, showVersionPerRun) {
   return wrap;
 }
 
+// A same-shaped row for a canonical condition with zero runs for this
+// model/template/prompt-version -- a dashed, marker-less track and a "Not
+// run" label, so a condition nobody has tried yet reads as genuinely
+// untested rather than being indistinguishable from "scrolled off the page"
+// or silently omitted.
+function renderNotRunConditionRow(condition) {
+  const label = conditionLabel(condition);
+  const wrap = el("div", { className: "condition-row condition-row-not-run" });
+  wrap.appendChild(el("div", { className: "condition-row-label", text: label }));
+
+  const width = 560;
+  const height = 40;
+  const trackHeight = 16;
+  const trackY = (height - trackHeight) / 2;
+
+  const svg = svgEl("svg", {
+    width: String(width), height: String(height), viewBox: `0 0 ${width} ${height}`,
+    role: "img", "aria-label": `${label}: not run`,
+    class: "condition-row-svg condition-row-svg-not-run",
+  });
+  svg.appendChild(
+    svgEl("rect", {
+      x: "0", y: String(trackY), width: String(width), height: String(trackHeight),
+      class: "chart-track chart-track-empty",
+    })
+  );
+  svg.appendChild(
+    svgEl("text", {
+      x: String(width / 2), y: String(height / 2 + 4), class: "chart-not-run-label", "text-anchor": "middle",
+    }, "Not run")
+  );
+  wrap.appendChild(svg);
+
+  const list = el("ul", { className: "run-list" });
+  list.appendChild(el("li", { className: "hint", text: "No data yet for this condition." }));
+  wrap.appendChild(list);
+
+  return wrap;
+}
+
 function renderConditionRows(container, rows, showVersionPerRun) {
   if (!rows.length) {
     container.appendChild(el("p", { className: "hint", text: "No data for this prompt version." }));
@@ -394,13 +434,22 @@ function renderConditionRows(container, rows, showVersionPerRun) {
     if (!byCondition.has(r.condition)) byCondition.set(r.condition, []);
     byCondition.get(r.condition).push(r);
   });
-  const conditions = Array.from(byCondition.keys()).sort((a, b) => conditionRank(a) - conditionRank(b));
+  // Every condition in the canonical CONDITION_ORDER vocabulary always gets a
+  // row, even with zero runs -- see renderNotRunConditionRow() above. A
+  // condition outside that vocabulary (e.g. "unknown") still only shows up
+  // when rows for it actually exist, appended after the canonical ones.
+  const extra = Array.from(byCondition.keys())
+    .filter((c) => !CONDITION_ORDER.includes(c))
+    .sort();
+  const conditions = CONDITION_ORDER.concat(extra);
   conditions.forEach((condition) => {
-    const runs = byCondition
-      .get(condition)
-      .slice()
-      .sort((a, b) => ((a.date || "") < (b.date || "") ? -1 : 1));
-    container.appendChild(renderConditionRow(condition, runs, showVersionPerRun));
+    const runs = byCondition.get(condition);
+    if (!runs) {
+      container.appendChild(renderNotRunConditionRow(condition));
+      return;
+    }
+    const sorted = runs.slice().sort((a, b) => ((a.date || "") < (b.date || "") ? -1 : 1));
+    container.appendChild(renderConditionRow(condition, sorted, showVersionPerRun));
   });
 }
 

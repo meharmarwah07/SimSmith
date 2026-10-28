@@ -539,6 +539,10 @@ textarea#task-input {
 .condition-row-svg .chart-whisker { stroke: var(--text); stroke-width: 2; }
 .condition-row-svg .chart-marker { fill: var(--accent); stroke: var(--bg-raised); stroke-width: 1.5; }
 
+.condition-row-not-run .condition-row-label { color: var(--text-dim); }
+.condition-row-svg-not-run .chart-track-empty { stroke-dasharray: 4 3; opacity: 0.6; }
+.condition-row-svg-not-run .chart-not-run-label { fill: var(--text-dim); font-size: 11px; }
+
 .run-list {
   margin: 6px 0 0;
   padding-left: 18px;

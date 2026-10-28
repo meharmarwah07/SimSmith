@@ -266,6 +266,17 @@ def serialize_result(res: SolveResult, *, library_size: int, elapsed_s: float,
                 "after_status": attempts[n]["status"],
             })
 
+    # SolveResult.clip_path (set only when the caller passed solve(record_clip=True) --
+    # see Pipeline._record_winner_clip) lives on the *result*, not on the winning
+    # Candidate object, so serialize_candidate()'s own getattr(c, "clip_path", None)
+    # never sees it. Stamp it onto the winner's own serialized attempt here instead --
+    # that's the one dict app.js's renderMediaSlot(attempt) actually reads from.
+    if res.clip_path and winner_group is not None:
+        for group in candidates_out:
+            if group["idx"] == winner_group:
+                group["attempts"][winner_attempt]["clip_path"] = res.clip_path
+                break
+
     return {
         "task": res.task,
         "template": {"name": res.template, "robot": t.robot if t else "",

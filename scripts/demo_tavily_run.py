@@ -9,7 +9,10 @@ Usage:
 Always runs the "reach" example task from app/server.py's EXAMPLE_TASKS
 ("Move the arm's gripper to the target point."), with Tavily unconditionally
 on (a TavilyClient is built directly here, not gated behind SIMSMITH_TAVILY --
-this script's whole point is to demo it).
+this script's whole point is to demo it), and with solve(record_clip=True) so
+the winning script's run is recorded as a gif under app/media/ -- the same
+directory app/server.py serves /api/media from, so the run file's winner
+attempt already has a clip_path the UI can play with no extra flag needed.
 
 Hard caps, both fail CLOSED (raise rather than silently undercounting):
   --max-usd             LLM spend cap, passed straight to TokenFactoryLLM's
@@ -56,6 +59,10 @@ from simsmith.runner import SubprocessRunner  # noqa: E402
 from simsmith.tavily import TavilyClient, TavilyError  # noqa: E402
 
 RESULTS_DIR = os.path.join(ROOT, "eval", "results")
+# Same directory app/server.py's DEFAULT_MEDIA_DIR serves /api/media from, so the
+# recorded clip is already in place for `python -m app.server --replay ...` with no
+# extra flag needed.
+MEDIA_DIR = os.path.join(ROOT, "app", "media")
 DEFAULT_SIM_PYTHON = os.path.expanduser("~/nw/bin/python")
 
 # The reach dev task the demo UI itself offers as its first example (see
@@ -120,13 +127,21 @@ def main() -> int:
           f"max_usd={args.max_usd}  max_tavily_credits={args.max_tavily_credits}", flush=True)
     print(f"task: {TASK!r}", flush=True)
 
+    os.makedirs(MEDIA_DIR, exist_ok=True)
     t0 = time.time()
     try:
-        res = pipe.solve(TASK, save_to_library=False)
+        res = pipe.solve(TASK, save_to_library=False, record_clip=True, clip_dir=MEDIA_DIR)
     except Exception as e:  # noqa: BLE001 -- report, don't retry (see module docstring)
         print(f"Run failed: {e}", file=sys.stderr)
         return 1
     elapsed_s = time.time() - t0
+    # record_clip=True + clip_dir=MEDIA_DIR above means Pipeline._record_winner_clip
+    # already wrote the file under MEDIA_DIR; res.clip_path comes back as that
+    # absolute path, but /api/media (and _safe_media_path) only ever resolves a path
+    # *relative to* --media-dir -- store just the basename, same convention the
+    # app/media/sample_clip.gif fixture already uses.
+    if res.clip_path:
+        res.clip_path = os.path.basename(res.clip_path)
 
     tokens, cost_usd = _usage_totals(usage_path)
     tavily = tavily_failure_modes_for_result(tavily_client, res)
@@ -156,6 +171,7 @@ def main() -> int:
 
     print(f"\nstatus={res.status}  elapsed={elapsed_s:.1f}s  tokens={tokens}  "
           f"cost_usd={cost_usd:.5f}  tavily_credits_used={tavily_client.searches_made}")
+    print(f"clip: {res.clip_path or '(none recorded)'}")
     if tavily:
         print(f"tavily queries used: {tavily['queries_used']}")
         print(f"{len(tavily['items'])} failure mode(s) found:")

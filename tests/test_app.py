@@ -705,6 +705,45 @@ def test_serialize_candidate_surfaces_clip_path_when_present():
     assert out_without["clip_path"] is None
 
 
+def test_serialize_result_stamps_solve_result_clip_path_onto_winner_attempt():
+    """SolveResult.clip_path (set only by solve(record_clip=True), see
+    Pipeline._record_winner_clip) lives on the result, not on the winning
+    Candidate -- serialize_result() must copy it onto the winner's own
+    serialized attempt, since that's the dict app.js's renderMediaSlot()
+    actually reads clip_path from."""
+    from simsmith.pipeline import Candidate, SolveResult
+    from simsmith.verifier import Score
+
+    score = Score(ok=True, success_rate=1.0, crashes=0, details=[], failure_text="", mean_seconds=0.1)
+    winner = Candidate(idx=0, script="pass", framing="f", temperature=0.2, score=score)
+    other = Candidate(idx=1, script="pass", framing="f", temperature=0.2, score=score)
+    res = SolveResult(task="t", template="reach", exact_match=True, gap="", plan="p",
+                      candidates=[other, winner], winner=winner, status="VERIFIED",
+                      clip_path="reach_abc123.gif")
+
+    payload = server.serialize_result(res, library_size=0, elapsed_s=1.0, source="live")
+    winner_group = next(g for g in payload["candidates"] if g["idx"] == payload["winner"]["idx"])
+    winner_attempt = winner_group["attempts"][payload["winner"]["attempt"]]
+    assert winner_attempt["clip_path"] == "reach_abc123.gif"
+    # the non-winning candidate's attempt must be untouched
+    other_group = next(g for g in payload["candidates"] if g["idx"] != payload["winner"]["idx"])
+    assert other_group["attempts"][0]["clip_path"] is None
+
+
+def test_serialize_result_no_clip_path_when_solve_result_has_none():
+    from simsmith.pipeline import Candidate, SolveResult
+    from simsmith.verifier import Score
+
+    score = Score(ok=True, success_rate=1.0, crashes=0, details=[], failure_text="", mean_seconds=0.1)
+    winner = Candidate(idx=0, script="pass", framing="f", temperature=0.2, score=score)
+    res = SolveResult(task="t", template="reach", exact_match=True, gap="", plan="p",
+                      candidates=[winner], winner=winner, status="VERIFIED")
+
+    payload = server.serialize_result(res, library_size=0, elapsed_s=1.0, source="live")
+    winner_group = next(g for g in payload["candidates"] if g["idx"] == payload["winner"]["idx"])
+    assert winner_group["attempts"][payload["winner"]["attempt"]]["clip_path"] is None
+
+
 # ---- (5) polish --------------------------------------------------------------------
 
 def test_copy_to_clipboard_still_present():
@@ -1288,6 +1327,36 @@ def test_results_js_tavily_shown_as_suffix_not_a_new_condition():
     order_start = src.index("const CONDITION_ORDER = [")
     order_block = src[order_start:src.index("];", order_start)]
     assert "tavily" not in order_block.lower()
+
+
+# ---- Conditions chart: a condition with zero runs still gets a "not run" row ----
+
+def test_results_js_defines_not_run_placeholder_row():
+    src = _read(RESULTS_JS)
+    assert "function renderNotRunConditionRow(" in src
+    not_run_start = src.index("function renderNotRunConditionRow(")
+    not_run_body = src[not_run_start:not_run_start + 1200]
+    assert '"Not run"' in not_run_body
+    # same label layer as a real row, not a raw/untranslated condition string
+    assert "conditionLabel(condition)" in not_run_body
+    # a dashed/empty track class, not the normal filled chart-track alone
+    assert "chart-track-empty" in not_run_body
+
+
+def test_results_js_condition_rows_always_cover_the_canonical_vocabulary():
+    """renderConditionRows() must consider every CONDITION_ORDER entry, not
+    just whatever conditions happen to appear in the data -- a condition with
+    no rows for this model/template/prompt-version renders the placeholder
+    instead of being silently skipped."""
+    src = _read(RESULTS_JS)
+    rows_start = src.index("function renderConditionRows(")
+    rows_end = src.index("\nfunction renderConditionsBlock(")
+    body = src[rows_start:rows_end]
+    assert "CONDITION_ORDER.concat(" in body
+    assert "renderNotRunConditionRow(condition)" in body
+    # the old byCondition-keys-only iteration (which silently dropped any
+    # condition absent from the data) must be gone from this function
+    assert "Array.from(byCondition.keys()).sort((a, b) => conditionRank(a) - conditionRank(b))" not in body
 
 
 # ---- Conditions chart: never mix prompt versions in one block/bar ----------
