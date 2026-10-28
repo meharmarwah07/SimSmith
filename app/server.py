@@ -25,6 +25,12 @@ whatever eval result JSON files are sitting there and renders a model x
 condition comparison table. --media-dir (default app/media/) is the only
 directory /api/media will ever serve a clip from.
 
+A live run's "tavily" field is non-None only when SIMSMITH_TAVILY=1 and
+TAVILY_API_KEY were both set when the server started (see
+simsmith.tavily.client_from_env(), wired into build_live_pipeline()); it is
+always None for --mock and --replay, so mocked data is never shown as if it
+were real, sourced Tavily research.
+
 Binds to 127.0.0.1 only. Never put the API key, base_url, or any other env
 var into a response -- only the small, explicit fields built by
 serialize_result() cross that boundary.
@@ -54,6 +60,8 @@ from simsmith.llm import LLMError, TokenFactoryLLM  # noqa: E402
 from simsmith.pipeline import Candidate, Pipeline, SolveResult  # noqa: E402
 from simsmith.prompts import PROMPT_VERSION  # noqa: E402
 from simsmith.runner import SubprocessRunner  # noqa: E402
+from simsmith.tavily import client_from_env as tavily_client_from_env  # noqa: E402
+from simsmith.tavily import research_failure_modes  # noqa: E402
 from simsmith.templates import TEMPLATES, closest_template  # noqa: E402
 
 STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
@@ -133,7 +141,41 @@ def build_live_pipeline(cfg: Config, library: Library, docs: DocIndex) -> Pipeli
     llm = TokenFactoryLLM(cfg.base_url, cfg.api_key,
                           usage_log_path=os.path.join(ROOT, "app", "usage.jsonl"))
     runner = SubprocessRunner(cfg.sim_python, cfg.run_timeout_s)
-    return Pipeline(llm, runner, library, docs, cfg)
+    # SIMSMITH_TAVILY=1 (+ TAVILY_API_KEY) opts a live demo run into the plan-step
+    # Tavily failure-mode research hook; off by default for everyone else -- see
+    # simsmith.tavily.client_from_env(). A --mock run never gets one (build_mock_
+    # pipeline doesn't pass tavily_client=), so mocked data is never shown as if
+    # it were real Tavily research.
+    tavily_client = tavily_client_from_env()
+    return Pipeline(llm, runner, library, docs, cfg, tavily_client=tavily_client)
+
+
+def tavily_failure_modes_for_result(tavily_client, res: SolveResult) -> dict | None:
+    """Best-effort re-read, for display in the run view, of the Tavily failure-mode
+    research the plan step already did for this solve() call (Pipeline._tavily_
+    reference_block in simsmith/pipeline.py runs before the plan LLM call whenever
+    tavily_client is not None). Reuses research_failure_modes()'s own query-keyed
+    cache (simsmith.tavily.TavilyClient.search()), so this makes no additional
+    Tavily search and no LLM call -- it only reads back the exact results the plan
+    step already paid for, sourced with their real URLs. Returns None (never a
+    half-filled dict) when tavily_client is None (Tavily off for this run) or
+    anything about the lookup fails -- a demo run's results must never be blocked
+    or broken by this, same as the plan step's own hook."""
+    if tavily_client is None:
+        return None
+    try:
+        modes = research_failure_modes(res.task, res.template, tavily_client)
+    except Exception:
+        return None
+    return {
+        "queries_used": list(modes.queries_used),
+        "dropped_count": len(modes.dropped),
+        "items": [
+            {"mode": m.mode, "why_it_matters": m.why_it_matters,
+             "source_url": m.source_url, "source_title": m.source_title}
+            for m in modes.items
+        ],
+    }
 
 
 def classify_seed_lines(details: list) -> list:
@@ -196,7 +238,7 @@ def serialize_candidate(c: Candidate) -> dict:
 def serialize_result(res: SolveResult, *, library_size: int, elapsed_s: float,
                       source: str, tokens: int = 0, cost_usd: float = 0.0, sim_runs: int = 0,
                       model: str | None = None, prompt_version: str | None = None,
-                      date: str | None = None) -> dict:
+                      date: str | None = None, tavily: dict | None = None) -> dict:
     """source must be one of "mock" | "live" | "recorded_live" -- it is what
     the UI's integrity badge is driven from, so every caller must pass one
     explicitly rather than relying on a default."""
@@ -224,6 +266,17 @@ def serialize_result(res: SolveResult, *, library_size: int, elapsed_s: float,
                 "after_status": attempts[n]["status"],
             })
 
+    # SolveResult.clip_path (set only when the caller passed solve(record_clip=True) --
+    # see Pipeline._record_winner_clip) lives on the *result*, not on the winning
+    # Candidate object, so serialize_candidate()'s own getattr(c, "clip_path", None)
+    # never sees it. Stamp it onto the winner's own serialized attempt here instead --
+    # that's the one dict app.js's renderMediaSlot(attempt) actually reads from.
+    if res.clip_path and winner_group is not None:
+        for group in candidates_out:
+            if group["idx"] == winner_group:
+                group["attempts"][winner_attempt]["clip_path"] = res.clip_path
+                break
+
     return {
         "task": res.task,
         "template": {"name": res.template, "robot": t.robot if t else "",
@@ -245,6 +298,10 @@ def serialize_result(res: SolveResult, *, library_size: int, elapsed_s: float,
         "model": model,
         "prompt_version": prompt_version,
         "date": date,
+        # None whenever Tavily was off for this run (mock, replay, or a live run
+        # with SIMSMITH_TAVILY unset) -- never a mocked stand-in presented as real
+        # research. See tavily_failure_modes_for_result().
+        "tavily": tavily,
     }
 
 
@@ -313,11 +370,14 @@ def run_task(state: ServerState, task: str, mock: bool, cfg: Config, docs: DocIn
         tokens, cost_usd, _ = _count_new_usage(usage_path, usage_offset_before)
         source = "mock" if mock else "live"
         model = None if mock else (cfg.model_generate or "unknown-model")
+        # mock never has a tavily_client (build_mock_pipeline doesn't pass one), so
+        # this is always None for a mock run -- never mocked data shown as real research.
+        tavily = tavily_failure_modes_for_result(getattr(pipe, "tavily_client", None), res)
         payload = serialize_result(
             res, library_size=len(state.library), elapsed_s=time.time() - t0,
             tokens=tokens, cost_usd=cost_usd, sim_runs=pipe.runner.runs - sim_runs_before,
             source=source, model=model, prompt_version=PROMPT_VERSION,
-            date=datetime.date.today().isoformat(),
+            date=datetime.date.today().isoformat(), tavily=tavily,
         )
         with state.lock:
             state.result = payload

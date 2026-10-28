@@ -348,12 +348,49 @@ function renderOutcomeBanner(result) {
   box.textContent = text;
 }
 
+// result.tavily is only ever a real, sourced research result (see
+// tavily_failure_modes_for_result() in app/server.py) or null -- null covers
+// Tavily being off for this run (mock/replay, or a live run with SIMSMITH_TAVILY
+// unset), never a mocked stand-in rendered as if it were real.
+function renderTavilyPanel(result) {
+  const box = qs("tavily-panel");
+  box.replaceChildren();
+  const tavily = result.tavily;
+  if (!tavily) {
+    const label =
+      result.source === "mock"
+        ? "MOCK run: no real Tavily research was performed."
+        : "Tavily research was off for this run (set SIMSMITH_TAVILY=1 and TAVILY_API_KEY to enable).";
+    box.appendChild(el("p", { className: "hint tavily-off", text: label }));
+    return;
+  }
+  if (tavily.items.length === 0) {
+    box.appendChild(el("p", { className: "hint", text: "Tavily ran but returned no usable failure modes." }));
+    return;
+  }
+  const list = el("ul", { className: "tavily-list" });
+  tavily.items.forEach((item) => {
+    const link = el("a", { text: item.source_title || item.source_url });
+    link.setAttribute("href", item.source_url);
+    link.setAttribute("target", "_blank");
+    link.setAttribute("rel", "noopener noreferrer");
+    const li = el("li", { className: "tavily-item" }, [
+      el("div", { className: "tavily-mode", text: item.mode }),
+      el("div", { className: "tavily-why", text: item.why_it_matters }),
+      el("div", { className: "tavily-source" }, [el("span", { text: "source: " }), link]),
+    ]);
+    list.appendChild(li);
+  });
+  box.appendChild(list);
+}
+
 function renderResult(result) {
   renderSourceBadge(result);
   renderCounters(result);
   renderTemplateBadge(result);
   renderOutcomeBanner(result);
   qs("notes").textContent = result.notes.join(" ");
+  renderTavilyPanel(result);
   renderCandidates(result);
   renderTimeline(result);
   renderWinner(result);
