@@ -58,6 +58,19 @@ back to mock behavior.
 
 All three modes bind to `127.0.0.1` only.
 
+In live mode, set `SIMSMITH_TAVILY=1` and `TAVILY_API_KEY` (see `.env.example`)
+to also opt the run into the plan step's Tavily failure-mode research hook
+(`simsmith.tavily.client_from_env()`, same off-by-default convention as
+`scripts/baseline_dev.py`). When it's on, the run view shows a "Failure modes
+found (Tavily)" panel, sourced with the real URLs the plan step actually read
+-- this re-reads the plan step's own query cache (`TavilyClient`'s on-disk
+cache keyed by query), so it costs no extra Tavily credits and makes no extra
+LLM call. `--mock` and `--replay` never populate this panel (it shows "MOCK
+run: no real Tavily research was performed" / "Tavily research was off for
+this run" instead) -- mocked data is never shown as if it were real research.
+See `scripts/demo_tavily_run.py` for a one-shot, hard-capped script that runs
+a real demo task with Tavily on and saves a `--replay`-loadable fixture.
+
 ### Eval results page
 
 ```
@@ -137,6 +150,16 @@ is needed for `tests/test_core.py`.) 33 tests, all against a real
   checked structurally in `app.js`; the mobile `@media` rule covers the new
   elements; every clickable control is a real `<button>`/`<a>`.
 
+`tests/test_app_tavily.py` (separate file, same `-p no:anyio` workaround)
+covers the Tavily wiring: `build_live_pipeline()` only gets a `TavilyClient`
+when both env vars are set, `build_mock_pipeline()` never gets one even if
+they are, `tavily_failure_modes_for_result()` returns sourced items / `None`
+on error or no client / a cache hit (no extra credit) on a second call, and a
+full mocked `/api/run` flow (a `MockLLM` + a `TavilyClient` with
+`urllib.request.urlopen` monkeypatched, no real network) confirms the
+"tavily" field on a live-shaped run carries the sourced failure modes while a
+mock run's is always `None`.
+
 ## API
 
 - `POST /api/run {"task": "..."}` -- starts a run in a background thread.
@@ -149,8 +172,9 @@ is needed for `tests/test_core.py`.) 33 tests, all against a real
   attempt history across repairs), per-seed pass/fail/crash with detail text,
   repair rounds, the winner (or `null` with the closest template + gap if
   nothing verified), the seconds/tokens/dollars/sim-runs/library-size
-  counters, and the integrity fields `source` / `model` / `prompt_version` /
-  `date`.
+  counters, the integrity fields `source` / `model` / `prompt_version` /
+  `date`, and `tavily` (sourced failure-mode research, or `null` if Tavily
+  was off for this run -- see "Live mode" above).
 - `GET /api/replay` -- the recording loaded via `--replay`, or 404 if the
   server wasn't started with one.
 - `GET /api/results` -- `{results_dir, rows, errors}` for the `/results`

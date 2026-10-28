@@ -220,6 +220,19 @@ textarea#task-input {
 
 .section-title { font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); margin: 20px 0 10px; }
 
+.tavily-panel .hint.tavily-off { color: var(--text-dim); font-size: 13px; }
+.tavily-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.tavily-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  padding: 10px 12px;
+}
+.tavily-mode { font-weight: 600; font-size: 14px; }
+.tavily-why { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
+.tavily-source { font-size: 12px; margin-top: 6px; color: var(--text-dim); }
+.tavily-source a { word-break: break-all; }
+
 .candidates-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
