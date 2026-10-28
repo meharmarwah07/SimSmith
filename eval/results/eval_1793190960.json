@@ -1,0 +1,5813 @@
+{
+  "started": 1793190960.1652532,
+  "max_runs": 4000,
+  "truncated": false,
+  "truncated_reason": null,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "prompt_version": "mujoco-v5",
+  "classifier_version": 2,
+  "config_hash": "497967e2d359533e",
+  "repeats": 5,
+  "conditions": {
+    "single_shot": {
+      "tasks_run": 30,
+      "verified": 2,
+      "verified_rate": 0.06666666666666667,
+      "mean_success_rate": 0.06666666666666667,
+      "total_cost_usd": 0.08910282,
+      "rows": [
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h1",
+            0
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 109.76087045669556,
+          "cost_usd": 0.00261504,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h1",
+            1
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 109.9738245010376,
+          "cost_usd": 0.00252072,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h1",
+            2
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 111.46890425682068,
+          "cost_usd": 0.00242604,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h1",
+            3
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 108.9745979309082,
+          "cost_usd": 0.00236052,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h1",
+            4
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 108.4426417350769,
+          "cost_usd": 0.0022863600000000003,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h2",
+            0
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 107.92882037162781,
+          "cost_usd": 0.0022226999999999998,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h2",
+            1
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 111.09736967086792,
+          "cost_usd": 0.0023695799999999996,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h2",
+            2
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 108.21065926551819,
+          "cost_usd": 0.00214962,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h2",
+            3
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": null,
+          "n_candidates_generated": 1,
+          "preflight_rejects": 1,
+          "elapsed_s": 12.703591346740723,
+          "cost_usd": 0.00223188,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h2",
+            4
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 24.369595527648926,
+          "cost_usd": 0.00239514,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h3",
+            0
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 23.036672592163086,
+          "cost_usd": 0.00285072,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h3",
+            1
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 23.852351665496826,
+          "cost_usd": 0.00251874,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h3",
+            2
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 22.939873933792114,
+          "cost_usd": 0.00272964,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h3",
+            3
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 20.393146276474,
+          "cost_usd": 0.0024393,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h3",
+            4
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": null,
+          "n_candidates_generated": 1,
+          "preflight_rejects": 1,
+          "elapsed_s": 14.348652601242065,
+          "cost_usd": 0.002286,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h4",
+            0
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 21.292980909347534,
+          "cost_usd": 0.00332286,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h4",
+            1
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 17.094117403030396,
+          "cost_usd": 0.00330792,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h4",
+            2
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 18.96305775642395,
+          "cost_usd": 0.00326796,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h4",
+            3
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 18.35047721862793,
+          "cost_usd": 0.00330828,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h4",
+            4
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 29.808756113052368,
+          "cost_usd": 0.00424824,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h5",
+            0
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 22.464720726013184,
+          "cost_usd": 0.0035062200000000004,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h5",
+            1
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 21.61319088935852,
+          "cost_usd": 0.00377874,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h5",
+            2
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 22.47443652153015,
+          "cost_usd": 0.00360936,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h5",
+            3
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 19.76468276977539,
+          "cost_usd": 0.0034019999999999996,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h5",
+            4
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 17.423059225082397,
+          "cost_usd": 0.0031046399999999997,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h6",
+            0
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 13.495927572250366,
+          "cost_usd": 0.00306744,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h6",
+            1
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 17.120817184448242,
+          "cost_usd": 0.00340656,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h6",
+            2
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 19.49632239341736,
+          "cost_usd": 0.00359574,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h6",
+            3
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 23.37279462814331,
+          "cost_usd": 0.00397644,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "single_shot",
+            "h6",
+            4
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 1,
+          "preflight_rejects": 0,
+          "elapsed_s": 22.21009874343872,
+          "cost_usd": 0.00379842,
+          "price_known": true,
+          "condition": "single_shot",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 1,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.3
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.701367+00:00"
+        }
+      ]
+    },
+    "best_of_5": {
+      "tasks_run": 30,
+      "verified": 6,
+      "verified_rate": 0.2,
+      "mean_success_rate": 0.20666666666666667,
+      "total_cost_usd": 0.42823428,
+      "rows": [
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h1",
+            0
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 2,
+          "elapsed_s": 31.93798017501831,
+          "cost_usd": 0.011434920000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h1",
+            1
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "PARTIAL",
+          "success_rate": 0.2,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 28.874913930892944,
+          "cost_usd": 0.010049820000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h1",
+            2
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "PARTIAL",
+          "success_rate": 0.2,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 29.2225284576416,
+          "cost_usd": 0.010709640000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h1",
+            3
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 36.202800989151,
+          "cost_usd": 0.011130779999999998,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h1",
+            4
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 35.36620235443115,
+          "cost_usd": 0.012060119999999999,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h2",
+            0
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 33.749855279922485,
+          "cost_usd": 0.01277832,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h2",
+            1
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 0.8,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 36.006970167160034,
+          "cost_usd": 0.01180296,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h2",
+            2
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 36.55104899406433,
+          "cost_usd": 0.01199418,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h2",
+            3
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 43.92307782173157,
+          "cost_usd": 0.010654619999999998,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h2",
+            4
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 38.716609477996826,
+          "cost_usd": 0.011706000000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h3",
+            0
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 52.00718879699707,
+          "cost_usd": 0.01219698,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h3",
+            1
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 42.046353340148926,
+          "cost_usd": 0.012050700000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h3",
+            2
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 55.11121940612793,
+          "cost_usd": 0.011947020000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h3",
+            3
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 46.31097483634949,
+          "cost_usd": 0.012341640000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h3",
+            4
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 43.4469850063324,
+          "cost_usd": 0.012121080000000001,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h4",
+            0
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 2,
+          "elapsed_s": 43.38629722595215,
+          "cost_usd": 0.01786566,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h4",
+            1
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 36.287110567092896,
+          "cost_usd": 0.01641138,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h4",
+            2
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 35.1631863117218,
+          "cost_usd": 0.015633420000000002,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h4",
+            3
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 68.72259712219238,
+          "cost_usd": 0.016719480000000002,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h4",
+            4
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 39.202590227127075,
+          "cost_usd": 0.01719288,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h5",
+            0
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 29.71045184135437,
+          "cost_usd": 0.0167481,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h5",
+            1
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 68.62892580032349,
+          "cost_usd": 0.01569168,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h5",
+            2
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 80.86162781715393,
+          "cost_usd": 0.016732920000000002,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h5",
+            3
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 1,
+          "elapsed_s": 59.670165061950684,
+          "cost_usd": 0.016890000000000002,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h5",
+            4
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 87.92077994346619,
+          "cost_usd": 0.017034479999999998,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h6",
+            0
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 61.8176543712616,
+          "cost_usd": 0.01723716,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h6",
+            1
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 2,
+          "elapsed_s": 44.19528937339783,
+          "cost_usd": 0.017368559999999998,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h6",
+            2
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 73.66457009315491,
+          "cost_usd": 0.0176751,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h6",
+            3
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 64.17464017868042,
+          "cost_usd": 0.01744644,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5",
+            "h6",
+            4
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 43.48232913017273,
+          "cost_usd": 0.016608240000000003,
+          "price_known": true,
+          "condition": "best_of_5",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 0,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.704088+00:00"
+        }
+      ]
+    },
+    "best_of_5_repair": {
+      "tasks_run": 30,
+      "verified": 11,
+      "verified_rate": 0.36666666666666664,
+      "mean_success_rate": 0.36666666666666664,
+      "total_cost_usd": 0.61779264,
+      "rows": [
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h1",
+            0
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 88.0486409664154,
+          "cost_usd": 0.01776654,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h1",
+            1
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 2,
+          "elapsed_s": 74.03401613235474,
+          "cost_usd": 0.01733388,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h1",
+            2
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 73.10846781730652,
+          "cost_usd": 0.01596024,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h1",
+            3
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 73.95487761497498,
+          "cost_usd": 0.017673539999999998,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h1",
+            4
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 64.01283073425293,
+          "cost_usd": 0.01751886,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h2",
+            0
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 61.430325746536255,
+          "cost_usd": 0.01661526,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h2",
+            1
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 2,
+          "elapsed_s": 54.643534898757935,
+          "cost_usd": 0.01898886,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h2",
+            2
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 81.11741518974304,
+          "cost_usd": 0.01653006,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h2",
+            3
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 59.53624486923218,
+          "cost_usd": 0.017184719999999997,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h2",
+            4
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 52.74113416671753,
+          "cost_usd": 0.016608119999999997,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h3",
+            0
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 61.8946168422699,
+          "cost_usd": 0.01786704,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h3",
+            1
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 69.31046319007874,
+          "cost_usd": 0.0161616,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h3",
+            2
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 64.03044247627258,
+          "cost_usd": 0.01521258,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h3",
+            3
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 2,
+          "elapsed_s": 70.65767002105713,
+          "cost_usd": 0.0177309,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h3",
+            4
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 70.31694674491882,
+          "cost_usd": 0.016497719999999997,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h4",
+            0
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 73.03600549697876,
+          "cost_usd": 0.02330448,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h4",
+            1
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 57.25357985496521,
+          "cost_usd": 0.02408028,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h4",
+            2
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 60.05681228637695,
+          "cost_usd": 0.024660059999999998,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h4",
+            3
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 55.38810896873474,
+          "cost_usd": 0.02322432,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h4",
+            4
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 66.70514845848083,
+          "cost_usd": 0.02353032,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h5",
+            0
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 70.7794291973114,
+          "cost_usd": 0.0233853,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h5",
+            1
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 60.02017951011658,
+          "cost_usd": 0.0233289,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h5",
+            2
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 77.20488023757935,
+          "cost_usd": 0.025436399999999998,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-27T10:57:01.706860+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h6",
+            2
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 121.26449823379517,
+          "cost_usd": 0.02488506,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.177691+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h6",
+            4
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 121.66934704780579,
+          "cost_usd": 0.02374086,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.177691+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h6",
+            3
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 2,
+          "elapsed_s": 121.72017407417297,
+          "cost_usd": 0.025892159999999997,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.177691+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h5",
+            3
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 125.27291345596313,
+          "cost_usd": 0.02263908,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.177691+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h6",
+            0
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 132.71335554122925,
+          "cost_usd": 0.02544834,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.177691+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h5",
+            4
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 134.52677273750305,
+          "cost_usd": 0.024673979999999998,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.177691+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair",
+            "h6",
+            1
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 134.60460209846497,
+          "cost_usd": 0.02391318,
+          "price_known": true,
+          "condition": "best_of_5_repair",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.177691+00:00"
+        }
+      ]
+    },
+    "best_of_5_repair_library": {
+      "tasks_run": 30,
+      "verified": 15,
+      "verified_rate": 0.5,
+      "mean_success_rate": 0.5,
+      "total_cost_usd": 0.5851863000000002,
+      "rows": [
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h1",
+            0
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 99.07753133773804,
+          "cost_usd": 0.014467260000000001,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h1",
+            1
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 59.04314565658569,
+          "cost_usd": 0.0146943,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h1",
+            2
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 48.73749327659607,
+          "cost_usd": 0.014114940000000001,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h1",
+            3
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 49.41487264633179,
+          "cost_usd": 0.013574699999999999,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h1",
+            4
+          ],
+          "id": "h1",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 74.47371101379395,
+          "cost_usd": 0.013984320000000001,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h2",
+            1
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 64.26630902290344,
+          "cost_usd": 0.014207760000000002,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h2",
+            2
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 71.76797699928284,
+          "cost_usd": 0.01442196,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h2",
+            0
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 6,
+          "preflight_rejects": 0,
+          "elapsed_s": 82.50324630737305,
+          "cost_usd": 0.01625964,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h2",
+            3
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 73.56536221504211,
+          "cost_usd": 0.014375279999999999,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h2",
+            4
+          ],
+          "id": "h2",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 58.64854288101196,
+          "cost_usd": 0.0137568,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h3",
+            1
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 62.63881754875183,
+          "cost_usd": 0.01428252,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h3",
+            2
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 58.28124499320984,
+          "cost_usd": 0.01376748,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h3",
+            3
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 65.16901278495789,
+          "cost_usd": 0.01432962,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h3",
+            0
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 6,
+          "preflight_rejects": 0,
+          "elapsed_s": 93.32020854949951,
+          "cost_usd": 0.01727172,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h3",
+            4
+          ],
+          "id": "h3",
+          "template": "reach",
+          "status": "VERIFIED",
+          "success_rate": 1.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 5,
+          "preflight_rejects": 0,
+          "elapsed_s": 65.07394528388977,
+          "cost_usd": 0.0144474,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h4",
+            0
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 2,
+          "elapsed_s": 88.00874209403992,
+          "cost_usd": 0.02358852,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h4",
+            2
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 101.29935073852539,
+          "cost_usd": 0.02549916,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h4",
+            1
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 118.25806498527527,
+          "cost_usd": 0.02464284,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h4",
+            3
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 92.77901673316956,
+          "cost_usd": 0.02323464,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h4",
+            4
+          ],
+          "id": "h4",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 94.39656853675842,
+          "cost_usd": 0.025619279999999998,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h5",
+            1
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 100.20192861557007,
+          "cost_usd": 0.02472072,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h5",
+            0
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 114.37291741371155,
+          "cost_usd": 0.02712642,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h5",
+            3
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 94.21935844421387,
+          "cost_usd": 0.0229341,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h5",
+            2
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 120.00069165229797,
+          "cost_usd": 0.023328360000000003,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h5",
+            4
+          ],
+          "id": "h5",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 92.33314824104309,
+          "cost_usd": 0.02570262,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h6",
+            1
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 89.9741644859314,
+          "cost_usd": 0.02457312,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h6",
+            0
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 1,
+          "elapsed_s": 90.43268609046936,
+          "cost_usd": 0.0246093,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h6",
+            2
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 88.53794980049133,
+          "cost_usd": 0.02355678,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h6",
+            4
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "generated",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 2,
+          "elapsed_s": 68.67431449890137,
+          "cost_usd": 0.02430792,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        },
+        {
+          "_job_key": [
+            "measure",
+            "best_of_5_repair_library",
+            "h6",
+            3
+          ],
+          "id": "h6",
+          "template": "pick_place",
+          "status": "FAILED",
+          "success_rate": 0.0,
+          "winner_stage": "repaired",
+          "n_candidates_generated": 7,
+          "preflight_rejects": 0,
+          "elapsed_s": 84.51604437828064,
+          "cost_usd": 0.02378682,
+          "price_known": true,
+          "condition": "best_of_5_repair_library",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "reasoning": "off",
+          "prompt_version": "mujoco-v5",
+          "classifier_version": 2,
+          "n_candidates": 5,
+          "max_repairs": 2,
+          "max_tokens": {
+            "generate": 24000,
+            "repair": 8000,
+            "plan": 3000,
+            "intake": 3000
+          },
+          "temperature": [
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1.0
+          ],
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "workers": 8,
+          "config_hash": "497967e2d359533e",
+          "git_commit": "2985cb3ac86beba5376e27d5820fc0fd71743784",
+          "date": "2026-10-28T12:36:00.181359+00:00"
+        }
+      ]
+    }
+  },
+  "library_size_at_heldout": 3,
+  "total_sim_runs": 1060,
+  "total_cost_usd": 1.7203160400000002,
+  "finished": 1793191408.2558491
+}
