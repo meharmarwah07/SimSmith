@@ -1,0 +1,429 @@
+{
+  "result": {
+    "task": "Move the arm's gripper to the target point.",
+    "template": {
+      "name": "reach",
+      "robot": "franka_panda",
+      "description": "Move the arm end effector to a target position."
+    },
+    "exact_match": true,
+    "gap": "",
+    "plan": "**Plan \u2013 \u201creach (franka_panda)\u201d**\n\n1. **Load the MuJoCo scene**  \n   - Import the Franka\u2011Panda XML model (`franka_panda.xml`).  \n   - Ensure the world frame is defined and the target object (or virtual target marker) is placed at the desired `[x, y, z]` in world coordinates.\n\n2. **Initialize the end\u2011effector pose**  \n   - Compute an initial inverse\u2011kinematics (IK) solution for the current joint configuration that places the EE as close as possible to the target position.  \n   - Store the resulting joint positions in the simulation data (`qpos`).\n\n3. **Set up position actuators**  \n   - Enable the joint position actuators (or the EE Cartesian position actuator if the model provides one).  \n   - For each joint, assign the target position from the IK solution as the desired set\u2011point.\n\n4. **Define motion phases**  \n   - **Phase\u202f1 \u2013 Approach:** Apply a modest proportional gain to move the EE toward the target while keeping joint limits and velocity bounds respected.  \n   - **Phase\u202f2 \u2013 Fine\u2011tune:** Reduce the gain and optionally switch to a PD controller that drives the EE directly to the target position.  \n   - **Phase\u202f3 \u2013 Hold:** Once the EE is within a small tolerance of the target, keep the joint positions fixed (no further actuation).\n\n5. **Step the simulation forward**  \n   - In each simulation step:  \n     a. Call `mj_step()` to advance the dynamics.  \n     b. Update the actuator set\u2011points if using a time\u2011varying controller (e.g., PD law).  \n     c. Record the current EE position (`ee_pos`) from the simulation\u2019s `xpos` of the EE body.\n\n6. **Terminate when convergence criteria are met**  \n   - Stop the loop when the Euclidean distance between `ee_pos` and the target position falls below a predefined threshold (e.g., 1\u202fmm) **or** after a maximum number of steps.  \n   - Do **not** compute or report a success flag; only keep the final recorded values.\n\n7. **Report the final raw state**  \n   - After termination, extract:  \n     - `ee_pos` \u2013 the EE\u2019s world\u2011frame position `[x, y, z]`.  \n     - `target_pos` \u2013 the original target coordinates `[x, y, z]`.  \n   - Output the dictionary:  \n\n   ```python\n   final_state = {\n       'ee_pos':   [ee_x, ee_y, ee_z],\n       'target_pos': [tx, ty, tz]\n   }\n   ```\n\n   - This `final_state` is the exact raw output the evaluation system expects; no additional success computation is performed.",
+    "candidates": [
+      {
+        "idx": 0,
+        "attempts": [
+          {
+            "idx": 0,
+            "stage": "generated",
+            "framing": "Prefer the simplest, most direct implementation.",
+            "temperature": 0.2,
+            "script": "import os\nimport mujoco\nimport numpy as np\nfrom simsmith_contract import get_task, get_rng, get_perturb, write_result\nSIMSMITH_ROOT = os.environ.get(\"SIMSMITH_ROOT\") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n\nmodel = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, \"assets\", \"franka_emika_panda\", \"scene.xml\"))\ndata = mujoco.MjData(model)\n\ntask = get_task(\"reach\")\ntarget_pos = task[\"target_pos\"]\n\nhand_body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\njoint_limits = model.jnt_range[:7]\n\ndata.ctrl[7] = 255.0\n\ndt = model.opt.timestep\nmax_steps = 2000\nthreshold = 0.001\nKp = 0.5\nmax_vel = 0.5\n\nfor _ in range(max_steps):\n    ee_pos = data.xpos[hand_body_id].copy()\n    err = np.array(target_pos) - ee_pos\n    err_norm = np.linalg.norm(err)\n    \n    if err_norm < threshold:\n        break\n        \n    jacp = np.zeros((3, model.nv))\n    jacr = np.zeros((3, model.nv))\n    mujoco.mj_jacBodyCom(model, data, jacp, jacr, hand_body_id)\n    J = jacp[:, :7]\n    \n    v = J.T @ err * Kp\n    v = np.clip(v, -max_vel, max_vel)\n    \n    q_current = data.qpos[:7]\n    q_des = q_current + v * dt\n    q_des = np.clip(q_des, joint_limits[:, 0], joint_limits[:, 1])\n    \n    data.ctrl[:7] = q_des\n    mujoco.mj_step(model, data)\n\nfinal_ee_pos = data.xpos[hand_body_id].copy()\nfinal_state = {\n    'ee_pos': final_ee_pos.tolist(),\n    'target_pos': target_pos\n}\nwrite_result(final_state)\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "failed_verification",
+            "score": {
+              "ok": false,
+              "success_rate": 0.0,
+              "crashes": 0,
+              "mean_seconds": 0.5750483989715576,
+              "failure_text": "seed 0: task not achieved: ee-target distance 0.6836 m (need <= 0.02)\nseed 1: task not achieved: ee-target distance 0.5143 m (need <= 0.02)\nseed 2: task not achieved: ee-target distance 0.8118 m (need <= 0.02)\nseed 3: task not achieved: ee-target distance 0.6056 m (need <= 0.02)\nseed 4: task not achieved: ee-target distance 0.6296 m (need <= 0.02)",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.6836 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.5143 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.8118 m (need <= 0.02)"
+                },
+                {
+                  "seed": 3,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.6056 m (need <= 0.02)"
+                },
+                {
+                  "seed": 4,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.6296 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          },
+          {
+            "idx": 0,
+            "stage": "repaired",
+            "framing": "Prefer the simplest, most direct implementation.",
+            "temperature": 0.3,
+            "script": "import os\nimport mujoco\nimport numpy as np\nfrom simsmith_contract import get_task, get_rng, get_perturb, write_result\nSIMSMITH_ROOT = os.environ.get(\"SIMSMITH_ROOT\") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n\nmodel = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, \"assets\", \"franka_emika_panda\", \"scene.xml\"))\ndata = mujoco.MjData(model)\n\n# Set initial state to home keyframe for consistent starting position\ndata.qpos[:] = [0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853, 0.04, 0.04]\ndata.ctrl[:] = [0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853, 255.0]\n\ntask = get_task(\"reach\")\ntarget_pos = task[\"target_pos\"]\n\nhand_body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\njoint_limits = model.jnt_range[:7]\n\ndt = model.opt.timestep\nmax_steps = 2000\nthreshold = 0.001\nKp = 2.0  # Increased gain for faster convergence\nmax_vel = 1.0  # Increased max joint velocity (rad/s)\n\nfor _ in range(max_steps):\n    ee_pos = data.xpos[hand_body_id].copy()\n    err = np.array(target_pos) - ee_pos\n    err_norm = np.linalg.norm(err)\n    \n    if err_norm < threshold:\n        break\n        \n    jacp = np.zeros((3, model.nv))\n    jacr = np.zeros((3, model.nv))\n    mujoco.mj_jacBodyCom(model, data, jacp, jacr, hand_body_id)\n    J = jacp[:, :7]  # Position Jacobian for first 7 joints\n    \n    # Jacobian transpose method with increased gain\n    v = J.T @ err * Kp\n    # Clip joint velocity vector to max_vel per joint\n    v = np.clip(v, -max_vel, max_vel)\n    \n    q_current = data.qpos[:7]\n    q_des = q_current + v * dt\n    # Clamp to joint limits\n    q_des = np.clip(q_des, joint_limits[:, 0], joint_limits[:, 1])\n    \n    data.ctrl[:7] = q_des\n    mujoco.mj_step(model, data)\n\nfinal_ee_pos = data.xpos[hand_body_id].copy()\nfinal_state = {\n    'ee_pos': final_ee_pos.tolist(),\n    'target_pos': target_pos\n}\nwrite_result(final_state)\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "failed_verification",
+            "score": {
+              "ok": false,
+              "success_rate": 0.0,
+              "crashes": 0,
+              "mean_seconds": 0.6150137901306152,
+              "failure_text": "seed 0: task not achieved: ee-target distance 0.1264 m (need <= 0.02)\nseed 1: task not achieved: ee-target distance 0.3002 m (need <= 0.02)\nseed 2: task not achieved: ee-target distance 0.2166 m (need <= 0.02)\nseed 3: task not achieved: ee-target distance 0.1850 m (need <= 0.02)\nseed 4: task not achieved: ee-target distance 0.2567 m (need <= 0.02)",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.1264 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.3002 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.2166 m (need <= 0.02)"
+                },
+                {
+                  "seed": 3,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.1850 m (need <= 0.02)"
+                },
+                {
+                  "seed": 4,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.2567 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          }
+        ]
+      },
+      {
+        "idx": 1,
+        "attempts": [
+          {
+            "idx": 1,
+            "stage": "generated",
+            "framing": "Prefer a structured implementation with small helper functions and explicit phases.",
+            "temperature": 0.4,
+            "script": "import os\nimport mujoco\nimport numpy as np\nfrom simsmith_contract import get_task, get_rng, get_perturb, write_result\n\nSIMSMITH_ROOT = os.environ.get(\"SIMSMITH_ROOT\") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\nmodel = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, \"assets\", \"franka_emika_panda\", \"scene.xml\"))\ndata = mujoco.MjData(model)\n\n# Get target position from task\ntarget_pos = np.array(get_task(\"reach\")[\"target_pos\"])\n\n# Get hand body ID\nhand_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\n\n# Get joint limits for the first 7 actuators (joint1-joint7)\njoint_limits = model.actuator_ctrlrange[:7]  # shape (7, 2)\n\n# Initialization: set control to current joint positions\ndata.ctrl[:7] = data.qpos[:7]\n\n# Simulation parameters\ndt = model.opt.timestep\nmax_steps = 5000\nthreshold = 0.001  # 1 mm tolerance\nlambda_val = 0.1   # damping factor for IK\nalpha = 0.5        # IK step size\n\n# Main control loop\nfor _ in range(max_steps):\n    mujoco.mj_step(model, data)\n    \n    # Current end-effector position\n    current_pos = data.xpos[hand_id]\n    error = target_pos - current_pos\n    \n    # Check if target reached\n    if np.linalg.norm(error) < threshold:\n        break\n    \n    # Compute Jacobian for hand (translational part)\n    jac = np.zeros((3, model.nv))\n    mujoco.mj_jac(model, data, jac, None, current_pos, hand_id)\n    jac_arm = jac[:, :7]  # Only arm joints affect hand position\n    \n    # Damped least squares IK\n    A = jac_arm @ jac_arm.T + lambda_val**2 * np.eye(3)\n    try:\n        v = np.linalg.solve(A, error)\n    except np.linalg.LinAlgError:\n        v = np.linalg.lstsq(A, error, rcond=None)[0]\n    dq = jac_arm.T @ v\n    \n    # Update joint positions with step size and clipping\n    q_des = data.qpos[:7] + alpha * dq\n    for j in range(7):\n        low, high = joint_limits[j]\n        if q_des[j] < low:\n            q_des[j] = low\n        elif q_des[j] > high:\n            q_des[j] = high\n    \n    # Set actuator controls\n    data.ctrl[:7] = q_des\n\n# Final state extraction\nee_pos = data.xpos[hand_id].tolist()\nfinal_state = {\n    'ee_pos': ee_pos,\n    'target_pos': target_pos.tolist()\n}\nwrite_result(final_state)\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "verified",
+            "score": {
+              "ok": true,
+              "success_rate": 1.0,
+              "crashes": 0,
+              "mean_seconds": 0.7226582527160644,
+              "failure_text": "",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0159 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0084 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0186 m (need <= 0.02)"
+                },
+                {
+                  "seed": 3,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0083 m (need <= 0.02)"
+                },
+                {
+                  "seed": 4,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0097 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          }
+        ]
+      },
+      {
+        "idx": 2,
+        "attempts": [
+          {
+            "idx": 2,
+            "stage": "generated",
+            "framing": "Be defensive: add settling steps and check intermediate states before moving on.",
+            "temperature": 0.6,
+            "script": "import os\nimport mujoco\nimport numpy as np\nfrom simsmith_contract import get_task, write_result\n\nSIMSMITH_ROOT = os.environ.get(\"SIMSMITH_ROOT\") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\nmodel = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, \"assets\", \"franka_emika_panda\", \"scene.xml\"))\ndata = mujoco.MjData(model)\n\n# Reset to home keyframe\nmujoco.mj_resetDataKeyframe(model, data, 0)\n\n# Get target position from task\ntarget_pos = get_task(\"reach\")[\"target_pos\"]\n\n# Get hand body ID\nhand_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\n\n# Current joint positions (arm only)\nq_arm = data.qpos[:7].copy()\n\n# IK parameters\ndamping = 1e-3\nmax_iterations = 3\ndt = model.opt.timestep\n\n# Refine IK solution iteratively\nfor _ in range(max_iterations):\n    # Update forward kinematics for current joint positions\n    data.qpos[:7] = q_arm\n    mujoco.mj_forward(model, data)\n    \n    # Get current hand position\n    current_pos = data.xpos[hand_id]\n    \n    # Compute position error\n    error = np.array(target_pos) - current_pos\n    \n    # Compute Jacobian for hand body (translational part)\n    jacp = np.zeros((3, model.nv))\n    jacr = np.zeros((3, model.nv))\n    mujoco.mj_jacBody(model, data, jacp, jacr, hand_id)\n    J = jacp[:, :7]  # Only arm joints\n    \n    # Damped least squares IK step\n    try:\n        # Solve (JJT + \u03bb\u00b2I) \u03b4 = J e\n        JJT = J @ J.T\n        A = JJT + damping**2 * np.eye(3)\n        delta = np.linalg.solve(A, J @ error)\n        dq = J.T @ delta\n    except np.linalg.LinAlgError:\n        # Fallback to pseudo-inverse if singular\n        dq = np.linalg.pinv(J) @ error\n    \n    # Update joint positions with clamping\n    q_arm += dq\n    # Clip to actuator limits\n    ctrl_range = model.actuator_ctrlrange[:7]\n    q_arm = np.clip(q_arm, ctrl_range[:, 0], ctrl_range[:, 1])\n\n# Set arm controllers to IK solution\ndata.ctrl[:7] = q_arm\n\n# Simulate to allow arm to reach and settle\nsteps = 1000  # Sufficient for settling (~2 seconds at 0.002s timestep)\nfor _ in range(steps):\n    mujoco.mj_step(model, data)\n\n# Extract final end-effector position\nee_pos = data.xpos[hand_id].tolist()\n\n# Prepare and write result\nfinal_state = {\n    'ee_pos': ee_pos,\n    'target_pos': target_pos\n}\nwrite_result(final_state)\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "failed_verification",
+            "score": {
+              "ok": false,
+              "success_rate": 0.0,
+              "crashes": 5,
+              "mean_seconds": 0.4777390956878662,
+              "failure_text": "seed 0: crashed: exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_dk8o1p82/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 3 is different from 7)\n\nseed 1: crashed: exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_hezawhwf/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 3 is different from 7)\n\nseed 2: crashed: exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_3n57uo74/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 3 is different from 7)\n\nseed 3: crashed: exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_6fl4dzro/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 3 is different from 7)\n\nseed 4: crashed: exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_1ngdqlvc/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, with gufunc signature (n?,k),(k,m?)->(n?,m?) (size 3 is different from 7)\n",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "crash",
+                  "detail": "seed 0: CRASH exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_dk8o1p82/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismat"
+                },
+                {
+                  "seed": 1,
+                  "status": "crash",
+                  "detail": "seed 1: CRASH exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_hezawhwf/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismat"
+                },
+                {
+                  "seed": 2,
+                  "status": "crash",
+                  "detail": "seed 2: CRASH exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_3n57uo74/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismat"
+                },
+                {
+                  "seed": 3,
+                  "status": "crash",
+                  "detail": "seed 3: CRASH exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_6fl4dzro/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismat"
+                },
+                {
+                  "seed": 4,
+                  "status": "crash",
+                  "detail": "seed 4: CRASH exit 1: Traceback (most recent call last):\n  File \"/tmp/simsmith_1ngdqlvc/candidate.py\", line 50, in <module>\n    delta = np.linalg.solve(A, J @ error)\nValueError: matmul: Input operand 1 has a mismat"
+                }
+              ]
+            },
+            "clip_path": null
+          },
+          {
+            "idx": 2,
+            "stage": "repaired",
+            "framing": "Be defensive: add settling steps and check intermediate states before moving on.",
+            "temperature": 0.3,
+            "script": "import os\nimport mujoco\nimport numpy as np\nfrom simsmith_contract import get_task, write_result\n\nSIMSMITH_ROOT = os.environ.get(\"SIMSMITH_ROOT\") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\nmodel = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, \"assets\", \"franka_emika_panda\", \"scene.xml\"))\ndata = mujoco.MjData(model)\n\n# Reset to home keyframe\nmujoco.mj_resetDataKeyframe(model, data, 0)\n\n# Get target position from task\ntarget_pos = get_task(\"reach\")[\"target_pos\"]\n\n# Get hand body ID\nhand_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\n\n# Current joint positions (arm only)\nq_arm = data.qpos[:7].copy()\n\n# IK parameters\ndamping = 1e-3\nmax_iterations = 4\ndt = model.opt.timestep\n\n# Refine IK solution iteratively\nfor _ in range(max_iterations):\n    # Update forward kinematics for current joint positions\n    data.qpos[:7] = q_arm\n    mujoco.mj_forward(model, data)\n    \n    # Get current hand position\n    current_pos = data.xpos[hand_id]\n    \n    # Compute position error\n    error = np.array(target_pos) - current_pos\n    \n    # Compute Jacobian for hand body (translational part)\n    jacp = np.zeros((3, model.nv))\n    jacr = np.zeros((3, model.nv))\n    mujoco.mj_jacBody(model, data, jacp, jacr, hand_id)\n    J = jacp[:, :7]  # Only arm joints\n    \n    # Damped least squares IK step (dual formulation)\n    try:\n        # Solve (JJT + \u03bb\u00b2I) dx = error\n        JJT = J @ J.T\n        A = JJT + damping**2 * np.eye(3)\n        dx = np.linalg.solve(A, error)\n        dq = J.T @ dx\n    except np.linalg.LinAlgError:\n        # Fallback to pseudo-inverse if singular\n        dq = np.linalg.pinv(J) @ error\n    \n    # Update joint positions with clamping\n    q_arm += dq\n    # Clip to actuator limits\n    ctrl_range = model.actuator_ctrlrange[:7]\n    q_arm = np.clip(q_arm, ctrl_range[:, 0], ctrl_range[:, 1])\n\n# Set arm controllers to IK solution\ndata.ctrl[:7] = q_arm\n\n# Simulate to allow arm to reach and settle\nsteps = 1500  # Increased for better settling\nfor _ in range(steps):\n    mujoco.mj_step(model, data)\n\n# Extract final end-effector position\nee_pos = data.xpos[hand_id].tolist()\n\n# Prepare and write result\nfinal_state = {\n    'ee_pos': ee_pos,\n    'target_pos': target_pos\n}\nwrite_result(final_state)\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "verified",
+            "score": {
+              "ok": true,
+              "success_rate": 1.0,
+              "crashes": 0,
+              "mean_seconds": 0.6671555519104004,
+              "failure_text": "",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0072 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0039 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0087 m (need <= 0.02)"
+                },
+                {
+                  "seed": 3,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0039 m (need <= 0.02)"
+                },
+                {
+                  "seed": 4,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0045 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          }
+        ]
+      },
+      {
+        "idx": 3,
+        "attempts": [
+          {
+            "idx": 3,
+            "stage": "generated",
+            "framing": "Prefer the approach used in the reference examples as closely as possible.",
+            "temperature": 0.8,
+            "script": "import os\nimport mujoco\nimport numpy as np\nfrom simsmith_contract import get_task, get_rng, get_perturb, write_result\nSIMSMITH_ROOT = os.environ.get(\"SIMSMITH_ROOT\") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n\nmodel = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, \"assets\", \"franka_emika_panda\", \"scene.xml\"))\ndata = mujoco.MjData(model)\n\n# Reset to home keyframe\nmujoco.mj_resetDataKeyframe(model, data, 0)\n# Ensure gripper open (actuator8)\ndata.ctrl[7] = 255.0\n\n# Get target position from task\ntarget_info = get_task(\"reach\")\ntarget_pos = target_info[\"target_pos\"]  # List [x, y, z]\ntarget_np = np.array(target_pos)\n\n# Get hand body ID (end-effector proxy)\nhand_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\n\n# IK parameters\nthreshold = 0.001  # 1 meter tolerance\nmax_iterations = 50\ndamping = 1e-3\nmax_delta = 0.2  # Maximum joint angle change per IK step (rad)\n\n# Main control loop\nfor _ in range(max_iterations):\n    # Update kinematics and center of mass (required for accurate Jacobian)\n    mujoco.mj_kinematics(model, data)\n    mujoco.mj_comPos(model, data)\n    \n    # Current hand position\n    hand_pos = data.xpos[hand_id]\n    error = target_np - hand_pos\n    if np.linalg.norm(error) < threshold:\n        break\n    \n    # Compute Jacobian for hand body (translational part)\n    jacp = np.zeros((3, model.nv))\n    jacr = np.zeros((3, model.nv))\n    mujoco.mj_jacBody(model, data, jacp, jacr, hand_id)\n    jacp_arm = jacp[:, :7]  # Only first 7 joints (arm)\n    \n    # Damped least squares IK step\n    jacp_arm_T = jacp_arm.T\n    A = jacp_arm @ jacp_arm_T + damping**2 * np.eye(3)\n    try:\n        v = np.linalg.solve(A, error)\n    except np.linalg.LinAlgError:\n        v = np.linalg.pinv(A) @ error\n    delta_q = jacp_arm_T @ v\n    \n    # Limit joint angle change\n    delta_q = np.clip(delta_q, -max_delta, max_delta)\n    \n    # Compute target joint positions\n    current_qpos = data.qpos[0:7]\n    target_qpos = current_qpos + delta_q\n    \n    # Apply joint limits\n    for j in range(7):\n        low, high = model.jnt_range[j]\n        if target_qpos[j] < low:\n            target_qpos[j] = low\n        elif target_qpos[j] > high:\n            target_qpos[j] = high\n    \n    # Set joint position controls (actuators 1-7)\n    data.ctrl[0:7] = target_qpos\n    \n    # Step simulation to allow movement\n    for __ in range(50):\n        mujoco.mj_step(model, data)\n\n# Finalize: get current hand position for reporting\nmujoco.mj_kinematics(model, data)\nmujoco.mj_comPos(model, data)\nee_pos = data.xpos[hand_id].copy()\n\n# Prepare and write result\nfinal_state = {\n    'ee_pos': ee_pos.tolist(),\n    'target_pos': target_pos\n}\nwrite_result(final_state)\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "verified",
+            "score": {
+              "ok": true,
+              "success_rate": 1.0,
+              "crashes": 0,
+              "mean_seconds": 0.544165849685669,
+              "failure_text": "",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0072 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0039 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0087 m (need <= 0.02)"
+                },
+                {
+                  "seed": 3,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0039 m (need <= 0.02)"
+                },
+                {
+                  "seed": 4,
+                  "status": "pass",
+                  "detail": "ee-target distance 0.0045 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": "reach_427eb82e808a.gif"
+          }
+        ]
+      },
+      {
+        "idx": 4,
+        "attempts": [
+          {
+            "idx": 4,
+            "stage": "generated",
+            "framing": "Think about what commonly goes wrong in this kind of task and guard against it.",
+            "temperature": 1.0,
+            "script": "import os\nimport mujoco\nimport numpy as np\nfrom simsmith_contract import get_task, get_rng, get_perturb, write_result\nSIMSMITH_ROOT = os.environ.get(\"SIMSMITH_ROOT\") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))\n\n# Load model and data\nmodel = mujoco.MjModel.from_xml_path(os.path.join(SIMSMITH_ROOT, \"assets\", \"franka_emika_panda\", \"scene.xml\"))\ndata = mujoco.MjData(model)\n\n# Get target position\ntask = get_task(\"reach\")\ntarget_pos = np.array(task[\"target_pos\"], dtype=np.float64)\n\n# Reset to home keyframe\nmujoco.mj_resetDataKeyframe(model, data, 0)\n\n# Get body IDs\nhand_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, \"hand\")\n\n# Get actuator ctrl ranges for clamping\nctrl_ranges = model.actuator_ctrlrange.copy()\n\n# Initial joint positions (from data after reset)\nq = data.qpos[:7].copy()\n\n# Parameters\ndamping = 1e-4\nmax_iters = 3\nsteps_per_iter = 50\npos_thresh = 1e-3  # 1mm\nmax_steps = 500\n\n# Main IK loop with residual error correction\nfor _ in range(max_iters):\n    # Update kinematics and COM\n    mujoco.mj_kinematics(model, data)\n    mujoco.mj_comPos(model, data)\n    \n    # Compute Jacobian for hand body (position only)\n    jacp = np.zeros((3, model.nv))\n    jacr = np.zeros((3, model.nv))\n    mujoco.mj_jacBody(model, data, jacp, jacr, hand_id)\n    jacp_arm = jacp[:, :7]  # Only first 7 DOFs (arm joints)\n    \n    # Current end-effector position\n    ee_pos = data.xpos[hand_id].copy()\n    error = target_pos - ee_pos\n    error_norm = np.linalg.norm(error)\n    \n    if error_norm < pos_thresh:\n        break\n    \n    # Damped least squares solution\n    jacp_jacpT = jacp_arm @ jacp_arm.T\n    delta_q = jacp_arm.T @ np.linalg.solve(jacp_jacpT + damping * np.eye(3), error)\n    \n    # Update joint positions\n    q[:7] += delta_q\n    \n    # Clamp to actuator limits\n    for i in range(7):\n        low, high = ctrl_ranges[i]\n        if q[i] < low:\n            q[i] = low\n        elif q[i] > high:\n            q[i] = high\n    \n    # Set control signals (position actuators)\n    data.ctrl[:7] = q[:7]\n    data.ctrl[7] = 255.0  # Keep gripper open\n    \n    # Step simulation to allow movement\n    for _ in range(steps_per_iter):\n        mujoco.mj_step(model, data)\n\n# Final hold phase to reach target\nstep_count = 0\nwhile step_count < max_steps:\n    mujoco.mj_kinematics(model, data)\n    mujoco.mj_comPos(model, data)\n    ee_pos = data.xpos[hand_id].copy()\n    error = target_pos - ee_pos\n    if np.linalg.norm(error) < pos_thresh:\n        break\n    \n    # Hold last computed joint positions\n    data.ctrl[:7] = q[:7]\n    data.ctrl[7] = 255.0\n    \n    mujoco.mj_step(model, data)\n    step_count += 1\n\n# Prepare final state\nee_pos_final = data.xpos[hand_id].copy()\nfinal_state = {\n    'ee_pos': ee_pos_final.tolist(),\n    'target_pos': target_pos.tolist()\n}\n\nwrite_result(final_state)\n",
+            "preflight_ok": true,
+            "preflight_problems": [],
+            "status": "failed_verification",
+            "score": {
+              "ok": false,
+              "success_rate": 0.0,
+              "crashes": 0,
+              "mean_seconds": 0.5114059448242188,
+              "failure_text": "seed 0: task not achieved: ee-target distance 0.0884 m (need <= 0.02)\nseed 1: task not achieved: ee-target distance 0.1021 m (need <= 0.02)\nseed 2: task not achieved: ee-target distance 0.1465 m (need <= 0.02)\nseed 3: task not achieved: ee-target distance 0.1148 m (need <= 0.02)\nseed 4: task not achieved: ee-target distance 0.1226 m (need <= 0.02)",
+              "seeds": [
+                {
+                  "seed": 0,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.0884 m (need <= 0.02)"
+                },
+                {
+                  "seed": 1,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.1021 m (need <= 0.02)"
+                },
+                {
+                  "seed": 2,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.1465 m (need <= 0.02)"
+                },
+                {
+                  "seed": 3,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.1148 m (need <= 0.02)"
+                },
+                {
+                  "seed": 4,
+                  "status": "fail",
+                  "detail": "ee-target distance 0.1226 m (need <= 0.02)"
+                }
+              ]
+            },
+            "clip_path": null
+          }
+        ]
+      }
+    ],
+    "winner": {
+      "idx": 3,
+      "attempt": 0
+    },
+    "status": "VERIFIED",
+    "notes": [],
+    "repair_rounds": [
+      {
+        "candidate_idx": 0,
+        "attempt": 1,
+        "before_status": "failed_verification",
+        "after_status": "failed_verification"
+      },
+      {
+        "candidate_idx": 2,
+        "attempt": 1,
+        "before_status": "failed_verification",
+        "after_status": "verified"
+      }
+    ],
+    "library_size": 3,
+    "elapsed_s": 137.2694857120514,
+    "tokens": 68622,
+    "cost_usd": 0.037311420000000005,
+    "sim_runs": 35,
+    "source": "live",
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "prompt_version": "mujoco-v5",
+    "date": "2026-10-28",
+    "tavily": {
+      "queries_used": [
+        "industrial robot arm reach task calibration offset error real world",
+        "robot end effector positioning accuracy failure modes"
+      ],
+      "dropped_count": 0,
+      "items": [
+        {
+          "mode": "Robotic Calibration Based on Haptic Feedback Improves Sim-to-Real Transfer",
+          "why_it_matters": "An industrial Kuka manipulator was employed to calibrate the leg joints of the AR601M humanoid robot . Using the precise EE positioning of the Kuka arm, they achieved a highly accurate joint offset calibration for humanoid robots. When ground truth data on EE position is available, calibration can a",
+          "source_url": "https://arxiv.org/html/2507.08572v1",
+          "source_title": "Robotic Calibration Based on Haptic Feedback Improves Sim-to-Real Transfer"
+        },
+        {
+          "mode": "Efficiently Improving and Quantifying Robot Accuracy In Situ",
+          "why_it_matters": "The advancement of simulation-assisted robot programming, automation of high-tolerance assembly operations, and improvement of real-world performance engender a need for positionally accurate robots. Despite tight machining tolerances, good mechanical design, and careful assembly, robotic arms typic",
+          "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10190160",
+          "source_title": "Efficiently Improving and Quantifying Robot Accuracy In Situ"
+        },
+        {
+          "mode": "Robot Arm Calibration: A Research Workflow Guide",
+          "why_it_matters": "Repeatability and absolute accuracy answer different questions. Repeatability asks whether the arm returns to the same result under the same conditions. Absolute accuracy asks how closely that result matches the intended position in the real workspace. A system can repeat a slightly offset motion co",
+          "source_url": "https://www.trossenrobotics.com/post/robot-arm-calibration-guide",
+          "source_title": "Robot Arm Calibration: A Research Workflow Guide"
+        },
+        {
+          "mode": "Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks - ADS",
+          "why_it_matters": "Title: Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks - ADS ## ADS. ## Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks. #### Abstract. The problem of achieving high ",
+          "source_url": "https://ui.adsabs.harvard.edu/abs/1998irds....2...43Q/abstract",
+          "source_title": "Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks - ADS"
+        },
+        {
+          "mode": "Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking System",
+          "why_it_matters": "Title: Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking System DAI Houde, ZENG Xianping, YOU Hongxiu, et al. Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking SystemJ. Robot, 2019, 41(2): 206-215. DOI: 10.1397",
+          "source_url": "https://robot.sia.cn/en/article/cstr/32165.14.robot.180176",
+          "source_title": "Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking System"
+        },
+        {
+          "mode": "Four Control Modes of Industrial Robot and Intelligent Control Modes",
+          "why_it_matters": "3. Four Control Modes of Industrial Robot and Intelligent Control Modes. # Four Control Modes of Industrial Robot and Intelligent Control Modes. **Four Control Modes of Industrial Robot and Intelligent Control Modes**. Industrial robots can be widely used, thanks to their various control modes. Acco",
+          "source_url": "https://www.automationar.com/article/four-control-modes-of-industrial-robot-and-intelligent-control-modes.html",
+          "source_title": "Four Control Modes of Industrial Robot and Intelligent Control Modes"
+        }
+      ]
+    }
+  }
+}

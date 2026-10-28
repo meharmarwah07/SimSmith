@@ -1,0 +1,51 @@
+{
+  "timestamp": 1793193794,
+  "date": "2026-10-28T13:23:14Z",
+  "task": "Move the arm's gripper to the target point.",
+  "template": "reach",
+  "tavily_on": true,
+  "searches_made": 0,
+  "queries_used": [
+    "industrial robot arm reach task calibration offset error real world",
+    "robot end effector positioning accuracy failure modes"
+  ],
+  "dropped_count": 0,
+  "items": [
+    {
+      "mode": "Robotic Calibration Based on Haptic Feedback Improves Sim-to-Real Transfer",
+      "why_it_matters": "An industrial Kuka manipulator was employed to calibrate the leg joints of the AR601M humanoid robot . Using the precise EE positioning of the Kuka arm, they achieved a highly accurate joint offset calibration for humanoid robots. When ground truth data on EE position is available, calibration can a",
+      "source_url": "https://arxiv.org/html/2507.08572v1",
+      "source_title": "Robotic Calibration Based on Haptic Feedback Improves Sim-to-Real Transfer"
+    },
+    {
+      "mode": "Efficiently Improving and Quantifying Robot Accuracy In Situ",
+      "why_it_matters": "The advancement of simulation-assisted robot programming, automation of high-tolerance assembly operations, and improvement of real-world performance engender a need for positionally accurate robots. Despite tight machining tolerances, good mechanical design, and careful assembly, robotic arms typic",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10190160",
+      "source_title": "Efficiently Improving and Quantifying Robot Accuracy In Situ"
+    },
+    {
+      "mode": "Robot Arm Calibration: A Research Workflow Guide",
+      "why_it_matters": "Repeatability and absolute accuracy answer different questions. Repeatability asks whether the arm returns to the same result under the same conditions. Absolute accuracy asks how closely that result matches the intended position in the real workspace. A system can repeat a slightly offset motion co",
+      "source_url": "https://www.trossenrobotics.com/post/robot-arm-calibration-guide",
+      "source_title": "Robot Arm Calibration: A Research Workflow Guide"
+    },
+    {
+      "mode": "Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks - ADS",
+      "why_it_matters": "Title: Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks - ADS ## ADS. ## Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks. #### Abstract. The problem of achieving high ",
+      "source_url": "https://ui.adsabs.harvard.edu/abs/1998irds....2...43Q/abstract",
+      "source_title": "Identification of the end-effector positioning errors of a high accuracy large medical robot using neural networks - ADS"
+    },
+    {
+      "mode": "Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking System",
+      "why_it_matters": "Title: Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking System DAI Houde, ZENG Xianping, YOU Hongxiu, et al. Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking SystemJ. Robot, 2019, 41(2): 206-215. DOI: 10.1397",
+      "source_url": "https://robot.sia.cn/en/article/cstr/32165.14.robot.180176",
+      "source_title": "Pose Measurement and Error Compensation of the Robot End-Effector Based on an Optical Tracking System"
+    },
+    {
+      "mode": "Four Control Modes of Industrial Robot and Intelligent Control Modes",
+      "why_it_matters": "3. Four Control Modes of Industrial Robot and Intelligent Control Modes. # Four Control Modes of Industrial Robot and Intelligent Control Modes. **Four Control Modes of Industrial Robot and Intelligent Control Modes**. Industrial robots can be widely used, thanks to their various control modes. Acco",
+      "source_url": "https://www.automationar.com/article/four-control-modes-of-industrial-robot-and-intelligent-control-modes.html",
+      "source_title": "Four Control Modes of Industrial Robot and Intelligent Control Modes"
+    }
+  ]
+}
