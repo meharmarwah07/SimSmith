@@ -85,7 +85,51 @@ pre-flight, and verifier enforce this, and for the audit trail
 
 ## Results
 
-{{RESULTS_TABLE}}
+Held-out evaluation, 5 repeats per task, Wilson 95% confidence intervals.
+Effective sample is 3 tasks per template (6 held-out tasks total), so these
+intervals are optimistic — read them as a direction, not a precise rate.
+All results below are MuJoCo (Franka Panda); Isaac Sim was not used for any
+of them. One run, no re-runs, total cost $1.72.
+(`eval/results/eval_1793190960.json`, frozen config hash `497967e2d359533e`,
+prompt version `mujoco-v5`, `nvidia/nemotron-3-super-120b-a12b`, reasoning
+off.)
+
+| Condition | reach (3 tasks × 5) | pick_place (3 tasks × 5) |
+|---|---|---|
+| `single_shot` | 2/15 [.04–.38] | 0/15 [0–.20] |
+| `best_of_5` | 6/15 [.20–.64] | 0/15 [0–.20] |
+| `best_of_5_repair` | 11/15 [.48–.89] | 0/15 [0–.20] |
+| `best_of_5_repair_library` | 15/15 [.80–1.00] | 0/15 [0–.20] |
+
+Per-task breakdown for `reach` (k/5 verified):
+
+| Task | `single_shot` | `best_of_5` | `best_of_5_repair` | `best_of_5_repair_library` |
+|---|---|---|---|---|
+| h1 | 2 | 2 | 5 | 5 |
+| h2 | 0 | 2 | 2 | 5 |
+| h3 | 0 | 2 | 4 | 5 |
+
+Honest notes on reading this table:
+
+1. **Adjacent conditions are not statistically separable at this n** (pairwise
+   Fisher's exact p-values between neighboring conditions run .25–.44, and
+   that's the pooled, more optimistic test). The one claim this table
+   actually supports is that the full stack beats `single_shot` on `reach` —
+   3 of 3 held-out tasks improved, not that any single step in the chain
+   (diversity, then repair, then library) is individually proven here.
+2. The library in `best_of_5_repair_library` holds exactly 3 `reach` scripts,
+   built from dev tasks d1–d3. The one it ends up retrieving and reusing is
+   task-wording-agnostic — so this result is evidence of **transfer across
+   paraphrases of one template**, not evidence of generalization to a new
+   task.
+3. **The library learned nothing for `pick_place`**: it only ever stores a
+   verified solve, and every dev `pick_place` task failed, so there was
+   nothing to add.
+4. Held-out tasks are new *wordings* of the same two templates, in the same
+   scene — this measures robustness to paraphrase, not to a genuinely novel
+   task or scene.
+5. This is one run with no re-runs, at a total cost of $1.72 — small enough
+   that a second run could plausibly land outside these intervals.
 
 **Reach is the headline template** — it is small (one target point, 7 DOFs),
 and is where the pipeline is expected to look strongest.
@@ -109,9 +153,9 @@ official held-out conditions regardless of environment configuration.
 **Held-out sample size**: `eval/tasks.json`'s held-out set has 6 tasks, 3 per
 template (`reach`: h1–h3, `pick_place`: h4–h6). The default evaluation repeats
 each held-out task 5 times per condition — an effective sample of 3 tasks ×
-5 repeats per template per condition. This is small; treat differences below
-roughly 2 tasks' worth of outcomes as noise, and read every number in
-{{RESULTS_TABLE}} with that in mind.
+5 repeats per template per condition. This is small; treat the table above
+as a direction, not a precise rate, for exactly the reasons its own honest
+notes spell out.
 
 ## How to run it
 
